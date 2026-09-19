@@ -36,7 +36,7 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
 .denomBtn{background:#fff;color:#111827;border:2px solid #d1d5db;min-height:64px;font-size:18px}
 .denomBtn:hover{border-color:#111827;background:#f9fafb}
 .alert{padding:12px;border-radius:10px;margin-top:12px}.okbg{background:#dcfce7;color:#166534}.badbg{background:#fee2e2;color:#991b1b}.warnbg{background:#fef3c7;color:#92400e}
-.logoPreview{max-height:70px;max-width:220px;display:none;margin:8px 0}.scanbox{max-width:500px;margin:auto}.result{padding:16px;border:1px solid var(--line);border-radius:12px;margin-top:12px}
+.logoPreview{max-height:70px;max-width:220px;display:none;margin:8px 0}.rangeRow{display:flex;align-items:center;gap:10px}.rangeRow input[type=range]{flex:1;padding:0;border:0;background:transparent}.rangeValue{min-width:58px;text-align:right;font-weight:900}.scanbox{max-width:500px;margin:auto}.result{padding:16px;border:1px solid var(--line);border-radius:12px;margin-top:12px}
 #reader{width:100%;margin-top:10px;min-height:40px}.hint{font-size:12px;color:var(--muted);line-height:1.5}.hidden{display:none!important}
 .cartRow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #eee}.cartInfo{min-width:0}.cartValue{font-weight:900;font-size:17px}.cartQty{color:var(--muted);font-size:13px}.cartControls{display:flex;align-items:center;gap:6px}.qtyBtn{width:34px;height:34px;padding:0;border-radius:9px}.qtyNum{min-width:28px;text-align:center;font-weight:900}
 .cartTotal{font-size:22px;font-weight:900;margin-top:16px;padding-top:14px;border-top:2px solid var(--line)}
@@ -46,10 +46,44 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
 .cameraSelect{margin-top:10px}
 .onlineStatus{padding:8px 10px;border-radius:999px;font-size:11px;font-weight:900;white-space:nowrap}.onlineStatus.ok{background:#dcfce7;color:#166534}.onlineStatus.bad{background:#fee2e2;color:#991b1b}.onlineStatus.neutral{background:#e5e7eb;color:#374151}
 .printSheet{display:none}
+
+/* Validação de QR em destaque */
+.quickValidate{display:none}
+.validatorPanel{display:block}
+.validatorHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.validatorTitle{font-size:25px;font-weight:900;margin:0}
+.validatorSubtitle{color:var(--muted);font-size:13px;margin-top:4px}
+.validatorCard{max-width:760px;margin:0 auto}
+.validatorScanArea{background:#111827;border-radius:18px;padding:14px;min-height:330px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.validatorScanArea::before{content:"APONTE O QR AQUI";position:absolute;top:14px;left:50%;transform:translateX(-50%);background:#ffffff; color:#111827;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:900;z-index:2;letter-spacing:.3px}
+.validatorScanArea #reader{margin-top:28px;background:#000;border-radius:14px;overflow:hidden;width:100%;max-width:520px;min-height:280px}
+.validatorActions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.validatorActions button{min-height:48px}
+.scanHintBig{margin-top:12px;padding:12px;border-radius:12px;background:#f3f4f6;font-weight:700;text-align:center}
+.scanModal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(3px)}
+.scanModal.hidden{display:none!important}
+.scanModalCard{width:min(430px,100%);background:#fff;border-radius:24px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center;animation:scanPop .18s ease-out}
+@keyframes scanPop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+.scanIcon{width:76px;height:76px;margin:0 auto 12px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:900}
+.scanModalCard.valid .scanIcon{background:#dcfce7;color:#15803d}.scanModalCard.used .scanIcon,.scanModalCard.invalid .scanIcon{background:#fee2e2;color:#b91c1c}.scanModalCard.offline .scanIcon{background:#fef3c7;color:#a16207}
+.scanModalStatus{font-size:26px;font-weight:900;line-height:1.1}.scanModalValue{font-size:36px;font-weight:900;margin:12px 0 8px}.scanModalCode{font-size:13px;color:var(--muted);word-break:break-all}.scanModalInfo{font-size:14px;line-height:1.5;margin-top:10px;color:#374151}.scanModalActions{display:grid;gap:8px;margin-top:18px}.scanModalActions button{min-height:52px;font-size:16px}.scanModalClose{position:absolute;top:10px;right:12px;background:#111827;color:#fff;width:38px;height:38px;padding:0;border-radius:50%;font-size:22px}
+@media(max-width:850px){
+ .quickValidate{display:flex;position:fixed;right:14px;bottom:14px;z-index:50;align-items:center;gap:8px;border-radius:999px;padding:13px 17px;background:#111827;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.28);font-size:14px}
+ .validatorPanel{margin-top:-2px}
+ .validatorCard{padding:14px}
+ .validatorTitle{font-size:22px}
+ .validatorScanArea{min-height:390px;padding:10px}
+ .validatorScanArea #reader{min-height:350px}
+ .validatorActions{grid-template-columns:1fr 1fr}
+ .validatorActions button:first-child{grid-column:1/-1}
+ .scanModal{padding:10px}
+ .scanModalCard{padding:22px 16px;border-radius:22px}
+ .scanModalStatus{font-size:24px}.scanModalValue{font-size:34px}
+}
 @page{size:80mm auto;margin:0}
 .receipt{width:80mm;margin:0 auto;padding:3mm 3.5mm;font-family:Arial,Helvetica,sans-serif;color:#000;text-align:center;page-break-after:always}
 .receipt:last-child{page-break-after:auto}
-.receipt .logo{max-width:30mm;max-height:15mm;object-fit:contain;margin:0 auto 2mm}.receipt .sep{border-top:1px solid #000;margin:2mm 0}
+.receipt .logo{max-width:80mm;max-height:30mm;width:auto;height:auto;object-fit:contain;margin:0 auto 2mm}.receipt .sep{border-top:1px solid #000;margin:2mm 0}
 .receiptMain{display:flex;align-items:center;justify-content:space-between;gap:3mm;text-align:left}.receiptText{flex:1}
 .receiptText .title{font-size:8mm;font-weight:900;line-height:1}.receiptText .value{font-size:9mm;font-weight:900;margin-top:2mm}
 .receiptQr{width:30mm;height:30mm;display:flex;align-items:center;justify-content:center}.receiptQr img,.receiptQr canvas{width:30mm!important;height:30mm!important}
@@ -89,7 +123,7 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
     </div>
     <div class="card" style="margin-top:16px">
       <b>Como usar</b>
-      <div class="actions"><button onclick="openValidator()" style="min-width:190px;font-size:16px">VALIDAR QR AGORA</button></div><p class="hint">1. Cadastre os valores de troco. 2. No PDV, clique no valor desejado para montar o carrinho. 3. Ao clicar em “Gerar QR e imprimir”, cada vale recebe um código único e é gravado no Firebase antes da impressão. 4. No caixa/celular, use “Validar QR” para conferir e marcar o vale como utilizado.</p>
+      <div class="actions"><button onclick="openValidator()" style="min-width:190px;font-size:16px">VALIDAR QR AGORA</button></div><p class="hint">1. Cadastre os valores de troco. 2. No PDV, clique no valor desejado para montar o carrinho. 3. Ao clicar em “Gerar QR e imprimir”, cada vale recebe um código único e é gravado no Firebase antes da impressão. 4. A logo, tamanho da logo e demais configurações também ficam salvos no Firebase. 5. No caixa/celular, use “Validar QR” para conferir e marcar o vale como utilizado.</p>
     </div>
   </section>
 
@@ -118,6 +152,7 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
         <div class="cartTotal">Total: <span id="cartTotal">R$ 0,00</span></div>
         <div class="actions">
           <button onclick="printCart()">Gerar QR e imprimir</button>
+        </div>
         <div class="hint" style="margin-top:8px">O QR Code só é criado para os vales desta impressão. Um novo clique em “Gerar QR e imprimir” cria novos códigos únicos.</div>
       </div>
     </div>
@@ -137,6 +172,12 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
         <h2>Modelo do vale</h2>
         <label>Logo</label><input id="logoFile" type="file" accept="image/*">
         <img id="logoPreview" class="logoPreview">
+        <label>Tamanho da logo na impressão</label>
+        <div class="rangeRow">
+          <input id="logoWidth" type="range" min="0" max="80" step="1" value="30">
+          <span id="logoWidthValue" class="rangeValue">30 mm</span>
+        </div>
+        <div class="hint">Arraste de 0 a 80 mm. O tamanho escolhido fica salvo no Firebase e também é gravado em cada vale no momento da geração.</div>
         <label>Informação personalizada — linha 1</label><input id="line1" maxlength="80" placeholder="Ex.: Obrigado pela preferência">
         <label>Informação personalizada — linha 2</label><input id="line2" maxlength="80">
         <label>Informação personalizada — linha 3</label><input id="line3" maxlength="80">
@@ -177,20 +218,27 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
     </div>
   </section>
 
-  <section id="validar" class="panel">
-    <div class="two">
-      <div class="card scanbox">
-        <h2>Validar QR Code</h2>
-        <div class="hint">No celular, abra o site pelo endereço HTTPS do GitHub Pages e permita o acesso à câmera. O navegador precisa estar em uma página segura (HTTPS).</div>
+  <section id="validar" class="panel validatorPanel">
+    <div class="card validatorCard">
+      <div class="validatorHeader">
+        <div>
+          <div class="validatorTitle">📷 Validar Troco</div>
+          <div class="validatorSubtitle">Aponte a câmera para o QR Code. O resultado aparece grande na tela e toca um sinal sonoro.</div>
+        </div>
+        <span class="onlineStatus ok">CAIXA</span>
+      </div>
+      <div class="validatorScanArea">
         <select id="cameraSelect" class="cameraSelect hidden"></select>
         <div id="reader"></div>
-        <div class="cameraActions"><button onclick="startScanner()">Abrir câmera</button><button class="secondary" onclick="stopScanner()">Parar</button><button class="secondary" onclick="refreshCameras()">Atualizar câmeras</button></div>
-        <div id="cameraStatus" class="hint" style="margin-top:10px"></div>
       </div>
-      <div class="card">
-        <h2>Resultado</h2>
-        <div id="scanResult" class="result">Nenhum QR Code lido.</div>
+      <div class="validatorActions">
+        <button onclick="startScanner()">📷 ABRIR CÂMERA</button>
+        <button class="secondary" onclick="stopScanner()">PARAR</button>
+        <button class="secondary" onclick="refreshCameras()">🔄 TROCAR CÂMERA</button>
       </div>
+      <div class="scanHintBig">✅ Vale válido: aparece <b>VALE VÁLIDO</b> e você pode <b>INUTILIZAR VALE</b>. <br>⛔ Vale já usado: aparece <b>VALE JÁ UTILIZADO</b> e o horário.</div>
+      <div id="cameraStatus" class="hint" style="margin-top:10px;text-align:center"></div>
+      <div id="scanResult" class="result hidden">Nenhum QR Code lido.</div>
     </div>
   </section>
 
@@ -199,11 +247,23 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
       <h2>Configurações</h2>
       <label>Nome do estabelecimento</label><input id="shopName" value="Seu Bar">
       <label>Texto do rodapé</label><input id="footerText" value="Obrigado pela preferência!">
-      <div class="actions"><button onclick="saveConfig()">Salvar configurações</button><button class="secondary" onclick="exportData()">Exportar dados</button><button class="secondary" onclick="importData()">Importar dados</button><button class="danger" onclick="clearAll()">Apagar todos os dados</button></div>
-      <p class="hint">Os dados continuam neste navegador. O GitHub Pages hospeda o site, mas não funciona como banco compartilhado entre aparelhos. Para validar o mesmo vale em vários celulares/caixas, a próxima etapa é ligar o sistema a um banco online.</p>
+      <div class="actions"><button onclick="saveConfig()">Salvar configurações e logo online</button><button class="secondary" onclick="exportData()">Exportar dados</button><button class="secondary" onclick="importData()">Importar dados</button><button class="danger" onclick="clearAll()">Apagar todos os dados</button></div>
+      <p class="hint">Valores, vales, histórico, configurações, logo e tamanho da logo ficam sincronizados no Firebase. O GitHub Pages hospeda apenas o site.</p>
     </div>
   </section>
 
+  <button id="quickValidateBtn" class="quickValidate" onclick="openValidator()">📷 VALIDAR QR</button>
+  <div id="scanModal" class="scanModal hidden" role="dialog" aria-modal="true" aria-labelledby="scanModalStatus">
+    <div id="scanModalCard" class="scanModalCard valid">
+      <button class="scanModalClose" onclick="closeScanModal()" aria-label="Fechar">×</button>
+      <div id="scanIcon" class="scanIcon">✓</div>
+      <div id="scanModalStatus" class="scanModalStatus">VALE VÁLIDO</div>
+      <div id="scanModalValue" class="scanModalValue">R$ 0,00</div>
+      <div id="scanModalCode" class="scanModalCode"></div>
+      <div id="scanModalInfo" class="scanModalInfo"></div>
+      <div id="scanModalActions" class="scanModalActions"></div>
+    </div>
+  </div>
   <div id="printArea" class="printSheet"><div id="printContent"></div></div>
 </main>
 </div>
@@ -252,7 +312,7 @@ let previousRemoteEmpty=true;
 function money(v){return (Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
 function id(){return 'VT-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,9).toUpperCase()}
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function openValidator(){go('validar');setTimeout(()=>startScanner(),350)}
+function openValidator(){go('validar');window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>startScanner(),350)}
 const pages=[['dashboard','🏠 Dashboard'],['pdv','💰 PDV'],['cadastro','🧾 Valores'],['vales','📋 Vales'],['historico','🕘 Histórico'],['validar','📷 Validar QR'],['config','⚙️ Configurações']];
 
 function setOnlineStatus(message,kind='neutral'){
@@ -267,7 +327,8 @@ function normalizeRemote(data){
   const products=[...new Set(productsRaw.map(Number).filter(v=>Number.isFinite(v)&&v>0))].sort((a,b)=>a-b);
   const vouchers=Object.values(data?.vouchers||{}).filter(Boolean).map(v=>({...v,value:Number(v.value)||0}));
   const history=Object.values(data?.history||{}).filter(Boolean);
-  const config={shopName:data?.config?.shopName||'Seu Bar',footerText:data?.config?.footerText||'Obrigado pela preferência!',logo:data?.config?.logo||''};
+  const rawLogoWidth=Number(data?.config?.logoWidth);
+  const config={shopName:data?.config?.shopName||'Seu Bar',footerText:data?.config?.footerText||'Obrigado pela preferência!',logo:data?.config?.logo||'',logoWidth:Number.isFinite(rawLogoWidth)?Math.max(0,Math.min(80,rawLogoWidth)):30};
   return {products:products.length?products:DEFAULT_PRODUCTS.slice(),vouchers,history,config};
 }
 function serializeState(s){
@@ -309,7 +370,7 @@ async function loadRemoteState(){
   const snap=await get(rootRef);
   const data=snap.val();
   if(!data){
-    state={products:DEFAULT_PRODUCTS.slice(),vouchers:[],history:[],config:{shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:''}};
+    state={products:DEFAULT_PRODUCTS.slice(),vouchers:[],history:[],config:{shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:'',logoWidth:30}};
     previousRemoteEmpty=true;
     const local=getLocalState();
     if(local && hasLocalData()){
@@ -428,17 +489,28 @@ function renderCart(){
 }
 function currentLines(){return ['line1','line2','line3','line4'].map(id=>document.getElementById(id)?.value||'').filter(Boolean)}
 function currentLogo(){return logoData||state.config.logo||''}
+function currentLogoWidth(){
+  const raw=Number(document.getElementById('logoWidth')?.value);
+  if(Number.isFinite(raw)) return Math.max(0,Math.min(80,raw));
+  const cfg=Number(state.config.logoWidth);
+  return Number.isFinite(cfg)?Math.max(0,Math.min(80,cfg)):30;
+}
+function voucherLogoWidth(v){
+  const raw=Number(v?.logoWidth);
+  if(Number.isFinite(raw)) return Math.max(0,Math.min(80,raw));
+  return currentLogoWidth();
+}
 function voucherHTML(v){
-  let lines=v.lines||currentLines(),logo=v.logo||currentLogo();
-  return `<div class="receipt" data-code="${escapeHtml(v.code)}">${logo?`<img class="logo" src="${logo}">`:''}<div class="sep"></div><div class="receiptMain"><div class="receiptText"><div class="title">TROCO</div><div class="value">${money(v.value)}</div></div><div class="receiptQr"></div></div>${lines.length?`<div class="sep"></div><div class="receiptInfo">${lines.map(x=>`<div>${escapeHtml(x)}</div>`).join('')}</div>`:''}<div class="receiptFooter">${escapeHtml(state.config.footerText||'')}</div><div class="receiptCode">${escapeHtml(v.code)}</div></div>`
+  let lines=v.lines||currentLines(),logo=v.logo||currentLogo(),logoWidth=voucherLogoWidth(v);
+  return `<div class="receipt" data-code="${escapeHtml(v.code)}">${logo&&logoWidth>0?`<img class="logo" src="${logo}" style="width:${logoWidth}mm;max-width:80mm;height:auto;">`:''}<div class="sep"></div><div class="receiptMain"><div class="receiptText"><div class="title">TROCO</div><div class="value">${money(v.value)}</div></div><div class="receiptQr"></div></div>${lines.length?`<div class="sep"></div><div class="receiptInfo">${lines.map(x=>`<div>${escapeHtml(x)}</div>`).join('')}</div>`:''}<div class="receiptFooter">${escapeHtml(state.config.footerText||'')}</div><div class="receiptCode">${escapeHtml(v.code)}</div></div>`
 }
 function updatePreview(){
   let box=document.getElementById('previewBox');if(!box)return;
-  let val=+(document.getElementById('vValue').value||5);let temp={value:val,code:'VT-PREVIEW',lines:currentLines(),logo:currentLogo()};
+  let val=+(document.getElementById('vValue').value||5);let temp={value:val,code:'VT-PREVIEW',lines:currentLines(),logo:currentLogo(),logoWidth:currentLogoWidth()};
   box.innerHTML=voucherHTML(temp);
   let q=box.querySelector('.receiptQr');new QRCode(q,{text:JSON.stringify({app:'trocoQR',code:temp.code,value:temp.value}),width:150,height:150,correctLevel:QRCode.CorrectLevel.M});
 }
-function generateVoucher(value){return {code:id(),value:Number(value),created:new Date().toISOString(),used:false,usedAt:null,lines:currentLines(),logo:currentLogo()}}
+function generateVoucher(value){return {code:id(),value:Number(value),created:new Date().toISOString(),used:false,usedAt:null,lines:currentLines(),logo:currentLogo(),logoWidth:currentLogoWidth()}}
 function buildPrintReceipt(v){
   let temp=document.createElement('div');temp.innerHTML=voucherHTML(v);let receipt=temp.firstElementChild;
   let q=receipt.querySelector('.receiptQr');new QRCode(q,{text:JSON.stringify({app:'trocoQR',code:v.code,value:v.value}),width:220,height:220,correctLevel:QRCode.CorrectLevel.M});
@@ -451,7 +523,7 @@ function openPrintWindow(vouchers){
   if(!w)return alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site e tente novamente.');
   let receipts=vouchers.map(buildPrintReceipt).join('');
   w.document.open();
-  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Impressão - Troco QR</title><style>@page{size:80mm auto;margin:0}html,body{margin:0;padding:0;background:#fff;color:#000;width:80mm}body{font-family:Arial,Helvetica,sans-serif}.receipt{width:80mm;margin:0;padding:3mm 3.5mm;font-family:Arial,Helvetica,sans-serif;color:#000;text-align:center;page-break-after:always;box-sizing:border-box}.receipt:last-child{page-break-after:auto}.receipt .logo{max-width:30mm;max-height:15mm;object-fit:contain;margin:0 auto 2mm}.receipt .sep{border-top:1px solid #000;margin:2mm 0}.receiptMain{display:flex;align-items:center;justify-content:space-between;gap:3mm;text-align:left}.receiptText{flex:1}.receiptText .title{font-size:8mm;font-weight:900;line-height:1}.receiptText .value{font-size:9mm;font-weight:900;margin-top:2mm}.receiptQr{width:30mm;height:30mm;display:flex;align-items:center;justify-content:center}.receiptQr img{width:30mm!important;height:30mm!important;display:block}.receiptInfo{font-size:3.2mm;line-height:1.45;text-align:center;margin-top:2mm}.receiptFooter{font-size:2.8mm;margin-top:2mm}.receiptCode{font-size:2.7mm;margin-top:1.5mm;letter-spacing:.2mm}@media print{html,body{width:80mm!important;margin:0!important;padding:0!important}.receipt{width:80mm!important;margin:0!important}}</style></head><body>${receipts}<script>window.addEventListener('load',function(){setTimeout(function(){window.focus();window.print()},300)});window.addEventListener('afterprint',function(){setTimeout(function(){window.close()},200)});<\\/script></body></html>`);
+  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Impressão - Troco QR</title><style>@page{size:80mm auto;margin:0}html,body{margin:0;padding:0;background:#fff;color:#000;width:80mm}body{font-family:Arial,Helvetica,sans-serif}.receipt{width:80mm;margin:0;padding:3mm 3.5mm;font-family:Arial,Helvetica,sans-serif;color:#000;text-align:center;page-break-after:always;box-sizing:border-box}.receipt:last-child{page-break-after:auto}.receipt .logo{max-width:80mm;max-height:30mm;width:auto;height:auto;object-fit:contain;margin:0 auto 2mm}.receipt .sep{border-top:1px solid #000;margin:2mm 0}.receiptMain{display:flex;align-items:center;justify-content:space-between;gap:3mm;text-align:left}.receiptText{flex:1}.receiptText .title{font-size:8mm;font-weight:900;line-height:1}.receiptText .value{font-size:9mm;font-weight:900;margin-top:2mm}.receiptQr{width:30mm;height:30mm;display:flex;align-items:center;justify-content:center}.receiptQr img{width:30mm!important;height:30mm!important;display:block}.receiptInfo{font-size:3.2mm;line-height:1.45;text-align:center;margin-top:2mm}.receiptFooter{font-size:2.8mm;margin-top:2mm}.receiptCode{font-size:2.7mm;margin-top:1.5mm;letter-spacing:.2mm}@media print{html,body{width:80mm!important;margin:0!important;padding:0!important}.receipt{width:80mm!important;margin:0!important}}</style></head><body>${receipts}<script>window.addEventListener('load',function(){setTimeout(function(){window.focus();window.print()},300)});window.addEventListener('afterprint',function(){setTimeout(function(){window.close()},200)});<\\/script></body></html>`);
   w.document.close();
 }
 async function printCart(){
@@ -495,6 +567,81 @@ async function clearHistory(){
 function printOne(code){let v=state.vouchers.find(x=>x.code===code);if(!v)return;openPrintWindow([v])}
 function printAvailable(){let vs=state.vouchers.filter(v=>!v.used);if(!vs.length)return alert('Não há vales disponíveis.');openPrintWindow(vs)}
 
+let audioCtx=null;
+function initScanAudio(){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)return;
+    if(!audioCtx)audioCtx=new AC();
+    if(audioCtx.state==='suspended')audioCtx.resume();
+  }catch(e){}
+}
+function tone(freq,duration=0.12,delay=0,type='sine',gainValue=0.08){
+  if(!audioCtx)return;
+  try{
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type=type;o.frequency.value=freq;
+    g.gain.setValueAtTime(0,audioCtx.currentTime+delay);
+    g.gain.linearRampToValueAtTime(gainValue,audioCtx.currentTime+delay+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+delay+duration);
+    o.connect(g);g.connect(audioCtx.destination);
+    o.start(audioCtx.currentTime+delay);o.stop(audioCtx.currentTime+delay+duration+0.03);
+  }catch(e){}
+}
+function soundValid(){initScanAudio();tone(880,.11,0,'sine',.09);tone(1175,.16,.10,'sine',.09)}
+function soundUsed(){initScanAudio();tone(420,.13,0,'square',.07);tone(300,.18,.14,'square',.07)}
+function soundInvalid(){initScanAudio();tone(220,.16,0,'sawtooth',.06);tone(180,.20,.16,'sawtooth',.06)}
+function closeScanModal(){document.getElementById('scanModal')?.classList.add('hidden')}
+function scanAgain(){closeScanModal();lastScanCode='';setTimeout(()=>startScanner(),150)}
+function formatDateBR(value){try{return new Date(value).toLocaleString('pt-BR')}catch(e){return '-'}}
+function showValidationModal(kind,v,extra=''){
+  const modal=document.getElementById('scanModal');
+  const card=document.getElementById('scanModalCard');
+  const icon=document.getElementById('scanIcon');
+  const status=document.getElementById('scanModalStatus');
+  const val=document.getElementById('scanModalValue');
+  const code=document.getElementById('scanModalCode');
+  const info=document.getElementById('scanModalInfo');
+  const actions=document.getElementById('scanModalActions');
+  card.className='scanModalCard '+kind;
+  if(kind==='valid'){icon.textContent='✓';status.textContent='VALE VÁLIDO';soundValid()}
+  else if(kind==='used'){icon.textContent='×';status.textContent='VALE JÁ UTILIZADO';soundUsed()}
+  else if(kind==='offline'){icon.textContent='!';status.textContent='SEM CONEXÃO';soundInvalid()}
+  else{icon.textContent='×';status.textContent='QR NÃO RECONHECIDO';soundInvalid()}
+  val.textContent=v?.value?money(v.value):'';
+  code.textContent=v?.code?'Código: '+v.code:'';
+  info.innerHTML=extra||'';
+  actions.innerHTML='';
+  if(kind==='valid' && v?.code){
+    const use=document.createElement('button');use.className='danger';use.textContent='⛔ INUTILIZAR VALE';use.onclick=()=>useScannedFromModal(v.code);actions.appendChild(use);
+  }
+  const again=document.createElement('button');again.className='secondary';again.textContent='📷 LER OUTRO QR';again.onclick=scanAgain;actions.appendChild(again);
+  modal.classList.remove('hidden');
+}
+async function useScannedFromModal(code){
+  const buttons=[...document.querySelectorAll('#scanModalActions button')];buttons.forEach(b=>b.disabled=true);
+  try{
+    if(!firebaseConnected)throw new Error('Sem conexão com o Firebase.');
+    const voucherRef=ref(db,'trocoQR/vouchers/'+code);
+    const result=await runTransaction(voucherRef,current=>{
+      if(current==null)return;
+      if(current.used)return;
+      return {...current,used:true,usedAt:new Date().toISOString()};
+    });
+    if(!result.committed){
+      const v=result.snapshot?.val()||state.vouchers.find(x=>x.code===code);
+      if(v?.used){showValidationModal('used',v,'Este vale já tinha sido inutilizado.<br><b>Data/hora:</b> '+formatDateBR(v.usedAt));return}
+      throw new Error('Não foi possível confirmar a inutilização.');
+    }
+    const v=result.snapshot.val();
+    state.vouchers=state.vouchers.map(x=>x.code===code?v:x);
+    renderAll();
+    showValidationModal('used',v,'<b>Este vale foi inutilizado agora.</b><br>Ele não poderá ser usado novamente.<br><b>Data/hora:</b> '+formatDateBR(v.usedAt));
+  }catch(e){
+    buttons.forEach(b=>b.disabled=false);
+    showValidationModal('offline',null,escapeHtml(e?.message||'Não foi possível atualizar o vale no Firebase.'));
+  }
+}
 async function refreshCameras(){
   let status=document.getElementById('cameraStatus'),select=document.getElementById('cameraSelect');if(!status||!select)return;
   if(!window.isSecureContext){status.innerHTML='<div class="alert badbg">Este site não está em um contexto seguro. No GitHub Pages, use o endereço <b>https://</b>.</div>';select.classList.add('hidden');return}
@@ -508,6 +655,8 @@ async function refreshCameras(){
 }
 async function startScanner(){
   let status=document.getElementById('cameraStatus');if(scanner)return;
+  initScanAudio();
+  closeScanModal();
   if(!window.isSecureContext)return status.innerHTML='<div class="alert badbg">Abra o site pelo <b>HTTPS</b> do GitHub Pages para usar a câmera.</div>';
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return status.innerHTML='<div class="alert badbg">Seu navegador não oferece acesso à câmera.</div>';
   try{
@@ -518,31 +667,64 @@ async function startScanner(){
   }catch(e){scanner=null;status.innerHTML='<div class="alert badbg"><b>Não foi possível abrir a câmera.</b><br>'+escapeHtml(e?.message||'Verifique a permissão da câmera e o HTTPS.')+'</div>'}
 }
 async function stopScanner(){if(!scanner)return;try{await scanner.stop();scanner.clear()}catch(e){}scanner=null;document.getElementById('cameraStatus').textContent='Câmera parada.'}
-function handleScan(txt){if(!txt||txt===lastScanCode)return;lastScanCode=txt;setTimeout(()=>lastScanCode='',1500);try{let data=JSON.parse(txt);showVoucher(data.code)}catch(e){showVoucher(String(txt).trim())}}
+async function handleScan(txt){
+  if(!txt||txt===lastScanCode)return;
+  lastScanCode=txt;
+  try{await stopScanner()}catch(e){}
+  let code='';
+  try{const data=JSON.parse(txt);code=String(data.code||'').trim()}catch(e){code=String(txt).trim()}
+  if(!code){showValidationModal('invalid',null,'O QR lido não contém um código de vale válido.');return}
+  if(!firebaseConnected){showValidationModal('offline',null,'O celular está sem conexão com o Firebase. Conecte a internet antes de validar o vale.');return}
+  try{
+    const snap=await get(ref(db,'trocoQR/vouchers/'+code));
+    const v=snap.val();
+    if(!v){showValidationModal('invalid',null,'Este código não foi encontrado no banco online.');return}
+    if(v.used){
+      showValidationModal('used',v,'<b>Este vale já foi inutilizado.</b><br><b>Data/hora de utilização:</b> '+formatDateBR(v.usedAt));
+      updateScanResultUsed(v);
+      return;
+    }
+    showValidationModal('valid',v,'<b>Vale disponível para uso.</b><br>Confira o valor e toque em <b>INUTILIZAR VALE</b> somente quando o vale for aceito no caixa.');
+    updateScanResultValid(v);
+  }catch(e){
+    showValidationModal('offline',null,escapeHtml(e?.message||'Falha ao consultar o banco online.'));
+  }
+}
+function updateScanResultValid(v){
+  const el=document.getElementById('scanResult');if(!el)return;el.classList.remove('hidden');
+  el.innerHTML='<div class="alert okbg"><b>VALE VÁLIDO</b><br>Valor: <strong>'+money(v.value)+'</strong><br>Código: '+escapeHtml(v.code)+'</div>';
+}
+function updateScanResultUsed(v){
+  const el=document.getElementById('scanResult');if(!el)return;el.classList.remove('hidden');
+  el.innerHTML='<div class="alert badbg"><b>VALE JÁ UTILIZADO</b><br>Valor: '+money(v.value)+'<br>Código: '+escapeHtml(v.code)+'<br>Utilizado em: '+formatDateBR(v.usedAt)+'</div>';
+}
 function showVoucher(code){
-  let v=state.vouchers.find(x=>x.code===code),el=document.getElementById('scanResult');
-  if(!v){el.innerHTML='<div class="alert badbg"><b>QR NÃO RECONHECIDO</b><br>Este vale não existe no banco online.</div>';return}
-  if(v.used){el.innerHTML=`<div class="alert badbg"><b>VALE JÁ UTILIZADO</b><br>Valor: ${money(v.value)}<br>Código: ${escapeHtml(v.code)}<br>Utilizado em: ${new Date(v.usedAt).toLocaleString('pt-BR')}</div>`;return}
-  el.innerHTML=`<div class="alert okbg"><b>VALE VÁLIDO</b><br>Valor: <strong>${money(v.value)}</strong><br>Código: ${escapeHtml(v.code)}<div class="actions"><button class="danger" onclick="useScanned('${escapeHtml(v.code)}')">UTILIZAR VALE</button></div></div>`
+  handleScan(JSON.stringify({code}));
 }
 async function useScanned(code){
   if(!firebaseConnected)return alert('Sem conexão com o Firebase. Não é seguro validar o vale sem conexão.');
   const voucherRef=ref(db,'trocoQR/vouchers/'+code);
   try{
     const result=await runTransaction(voucherRef,current=>{
-      if(current==null)return current;
+      if(current==null)return;
       if(current.used)return;
       return {...current,used:true,usedAt:new Date().toISOString()};
     });
-    if(!result.committed){showVoucher(code);return}
-    state.vouchers=state.vouchers.map(v=>v.code===code?result.snapshot.val():v);
-    renderAll();showVoucher(code);
-  }catch(e){alert('Não foi possível validar o vale no Firebase: '+(e?.message||e))}
+    if(!result.committed){
+      const v=result.snapshot?.val();
+      if(v?.used)showValidationModal('used',v,'Este vale já foi inutilizado.');
+      return;
+    }
+    const v=result.snapshot.val();
+    state.vouchers=state.vouchers.map(x=>x.code===code?v:x);
+    renderAll();
+    showValidationModal('used',v,'<b>Este vale foi inutilizado.</b><br>Ele não poderá ser usado novamente.<br><b>Data/hora:</b> '+formatDateBR(v.usedAt));
+  }catch(e){showValidationModal('offline',null,'Não foi possível validar o vale no Firebase.<br>'+escapeHtml(e?.message||e))}
 }
 function readLogo(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{logoData=r.result;document.getElementById('logoPreview').src=logoData;document.getElementById('logoPreview').style.display='block';updatePreview()};r.readAsDataURL(f)}
 async function saveConfig(){
   if(!firebaseConnected)return alert('Sem conexão com o Firebase.');
-  const cfg={shopName:document.getElementById('shopName').value,footerText:document.getElementById('footerText').value,logo:logoData||state.config.logo||''};
+  const cfg={shopName:document.getElementById('shopName').value,footerText:document.getElementById('footerText').value,logo:logoData||state.config.logo||'',logoWidth:currentLogoWidth()};
   try{await set(ref(db,'trocoQR/config'),cfg);state.config=cfg;alert('Configurações salvas online.')}
   catch(e){alert('Não foi possível salvar: '+(e?.message||e))}
 }
@@ -552,7 +734,7 @@ async function importData(){
   i.onchange=()=>{let r=new FileReader();r.onload=async()=>{try{
     let incoming=JSON.parse(r.result);
     incoming.products=[...new Set((incoming.products||DEFAULT_PRODUCTS).map(Number).filter(v=>v>0))].sort((a,b)=>a-b);
-    incoming.vouchers=Array.isArray(incoming.vouchers)?incoming.vouchers:[];incoming.history=Array.isArray(incoming.history)?incoming.history:[];incoming.config=incoming.config||{};
+    incoming.vouchers=Array.isArray(incoming.vouchers)?incoming.vouchers:[];incoming.history=Array.isArray(incoming.history)?incoming.history:[];incoming.config=incoming.config||{};const importedLogoWidth=Number(incoming.config.logoWidth);incoming.config.logoWidth=Number.isFinite(importedLogoWidth)?Math.max(0,Math.min(80,importedLogoWidth)):30;
     if(!confirm('Importar este backup para o banco online? Isso substituirá os dados online atuais.'))return;
     await set(rootRef,serializeState(incoming));alert('Dados importados para o Firebase.');
   }catch(e){alert('Arquivo inválido ou falha ao importar: '+(e?.message||e))}};r.readAsText(i.files[0])};i.click()
@@ -560,19 +742,24 @@ async function importData(){
 async function clearAll(){
   if(!confirm('Apagar TODOS os valores, vales, histórico e configurações do banco online?'))return;
   if(!firebaseConnected)return alert('Sem conexão com o Firebase.');
-  try{await set(rootRef,{products:DEFAULT_PRODUCTS.slice(),config:{shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:''}});cart={};alert('Banco online limpo.');}
+  try{await set(rootRef,{products:DEFAULT_PRODUCTS.slice(),config:{shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:'',logoWidth:30}});cart={};alert('Banco online limpo.');}
   catch(e){alert('Não foi possível apagar: '+(e?.message||e))}
 }
 function fillConfig(){
   const shop=document.getElementById('shopName'),footer=document.getElementById('footerText');
   if(shop)shop.value=state.config.shopName||'';if(footer)footer.value=state.config.footerText||'';
   const preview=document.getElementById('logoPreview');if(preview&&logoData){preview.src=logoData;preview.style.display='block'}
+  const slider=document.getElementById('logoWidth'),valueEl=document.getElementById('logoWidthValue');
+  const w=Math.max(0,Math.min(80,Number(state.config.logoWidth??30)||0));
+  if(slider)slider.value=w;
+  if(valueEl)valueEl.textContent=w+' mm';
 }
 
 ['line1','line2','line3','line4','vValue'].forEach(x=>document.getElementById(x).addEventListener('input',updatePreview));
 document.getElementById('logoFile').addEventListener('change',readLogo);
+document.getElementById('logoWidth').addEventListener('input',e=>{document.getElementById('logoWidthValue').textContent=e.target.value+' mm';updatePreview()});
 
-Object.assign(window,{openValidator,go,addProduct,addProductFromPDV,removeProduct,addToCart,setCartQty,changeCartQty,clearCart,printCart,printOne,printAvailable,reprintHistory,clearHistory,refreshCameras,startScanner,stopScanner,useScanned,saveConfig,exportData,importData,clearAll});
+Object.assign(window,{openValidator,go,addProduct,addProductFromPDV,removeProduct,addToCart,setCartQty,changeCartQty,clearCart,printCart,printOne,printAvailable,reprintHistory,clearHistory,refreshCameras,startScanner,stopScanner,useScanned,useScannedFromModal,closeScanModal,scanAgain,saveConfig,exportData,importData,clearAll});
 
 async function boot(){
   initNav();
