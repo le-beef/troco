@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Troco QR — PDV</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--ink:#171717;--muted:#6b7280;--line:#e5e7eb;--accent:#111827;--ok:#15803d;--bad:#b91c1c;--yellow:#a16207}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0;border-radius:10px;padding:11px 14px;background:#111827;color:#fff;font-weight:700}
+button.secondary{background:#e5e7eb;color:#111827}
+button.danger{background:#b91c1c}
+button.small{padding:7px 10px;border-radius:8px;font-size:13px}
+.app{display:flex;min-height:100vh}
+.side{width:235px;background:#111827;color:#fff;padding:18px;position:sticky;top:0;height:100vh}
+.brand{font-size:22px;font-weight:900;margin:6px 0 22px}.brand small{display:block;font-size:11px;color:#9ca3af;margin-top:4px}
+.nav button{width:100%;text-align:left;margin:4px 0;background:transparent}.nav button.active,.nav button:hover{background:#374151}
+.main{flex:1;padding:24px;max-width:1250px;margin:auto;width:100%}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:20px}
+h1{margin:0;font-size:27px}.sub{color:var(--muted);margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:18px;box-shadow:0 2px 8px #00000008}
+.stat b{font-size:28px;display:block;margin-top:8px}.muted{color:var(--muted);font-size:13px}
+.panel{display:none}.panel.active{display:block}.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+label{display:block;font-size:13px;font-weight:700;margin:12px 0 6px}
+input,select{width:100%;padding:11px;border:1px solid #d1d5db;border-radius:9px;background:#fff}
+input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.row{display:flex;gap:8px;align-items:center}
+.tablewrap{overflow:auto;margin-top:15px}table{width:100%;border-collapse:collapse;background:#fff}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}th{background:#f9fafb}
+.bigMoney{font-size:42px;font-weight:900;margin:8px 0 18px}
+.changeBox{font-size:24px;font-weight:900;padding:16px;border-radius:12px;background:#f3f4f6;margin:12px 0}
+.denoms{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.denomBtn{background:#fff;color:#111827;border:2px solid #d1d5db;min-height:64px;font-size:18px}
+.denomBtn:hover{border-color:#111827;background:#f9fafb}
+.alert{padding:12px;border-radius:10px;margin-top:12px}.okbg{background:#dcfce7;color:#166534}.badbg{background:#fee2e2;color:#991b1b}.warnbg{background:#fef3c7;color:#92400e}
+.logoPreview{max-height:70px;max-width:220px;display:none;margin:8px 0}.scanbox{max-width:500px;margin:auto}.result{padding:16px;border:1px solid var(--line);border-radius:12px;margin-top:12px}
+#reader{width:100%;margin-top:10px;min-height:40px}.hint{font-size:12px;color:var(--muted);line-height:1.5}.hidden{display:none!important}
+.cartRow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #eee}.cartInfo{min-width:0}.cartValue{font-weight:900;font-size:17px}.cartQty{color:var(--muted);font-size:13px}.cartControls{display:flex;align-items:center;gap:6px}.qtyBtn{width:34px;height:34px;padding:0;border-radius:9px}.qtyNum{min-width:28px;text-align:center;font-weight:900}
+.cartTotal{font-size:22px;font-weight:900;margin-top:16px;padding-top:14px;border-top:2px solid var(--line)}
+.productList{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.productItem{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff}.productValue{font-size:20px;font-weight:900}
+.empty{padding:18px;background:#f9fafb;border:1px dashed #d1d5db;border-radius:10px;color:var(--muted);text-align:center}
+.cameraActions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.cameraSelect{margin-top:10px}
+.onlineStatus{padding:8px 10px;border-radius:999px;font-size:11px;font-weight:900;white-space:nowrap}.onlineStatus.ok{background:#dcfce7;color:#166534}.onlineStatus.bad{background:#fee2e2;color:#991b1b}.onlineStatus.neutral{background:#e5e7eb;color:#374151}
+.printSheet{display:none}
+@page{size:80mm auto;margin:0}
+.receipt{width:80mm;margin:0 auto;padding:3mm 3.5mm;font-family:Arial,Helvetica,sans-serif;color:#000;text-align:center;page-break-after:always}
+.receipt:last-child{page-break-after:auto}
+.receipt .logo{max-width:30mm;max-height:15mm;object-fit:contain;margin:0 auto 2mm}.receipt .sep{border-top:1px solid #000;margin:2mm 0}
+.receiptMain{display:flex;align-items:center;justify-content:space-between;gap:3mm;text-align:left}.receiptText{flex:1}
+.receiptText .title{font-size:8mm;font-weight:900;line-height:1}.receiptText .value{font-size:9mm;font-weight:900;margin-top:2mm}
+.receiptQr{width:30mm;height:30mm;display:flex;align-items:center;justify-content:center}.receiptQr img,.receiptQr canvas{width:30mm!important;height:30mm!important}
+.receiptInfo{font-size:3.2mm;line-height:1.45;text-align:center;margin-top:2mm}.receiptInfo:empty{display:none}.receiptFooter{font-size:2.8mm;margin-top:2mm}
+.receiptCode{font-size:2.7mm;margin-top:1.5mm;letter-spacing:.2mm}
+@media(max-width:850px){
+ .side{display:none}.mobileNav{display:flex;gap:6px;overflow:auto;background:#111827;padding:8px;position:sticky;top:0;z-index:5}.mobileNav button{white-space:nowrap;font-size:12px;padding:9px}.main{padding:14px}.grid{grid-template-columns:repeat(2,1fr)}.two,.three{grid-template-columns:1fr}.top{align-items:flex-start}.onlineStatus{font-size:10px;padding:7px 8px}.stat b{font-size:22px}.denoms{grid-template-columns:repeat(2,1fr)}.productList{grid-template-columns:1fr}
+}
+@media print{
+ html,body{background:#fff!important;margin:0!important;padding:0!important}
+ body{width:80mm!important}
+ .mobileNav,.side,.top,.main>.panel{display:none!important}
+ .app,.main{display:block!important;min-height:0!important;width:80mm!important;max-width:none!important;margin:0!important;padding:0!important;background:#fff!important}
+ #printArea{display:block!important;width:80mm!important;margin:0!important;padding:0!important}
+ .receipt{display:block!important;width:80mm!important;margin:0!important;padding:3mm 3.5mm!important;page-break-after:always!important}
+ .receipt:last-child{page-break-after:auto!important}
+}
+.mobileNav{display:none}
+</style>
+</head>
+<body>
+<div class="mobileNav" id="mobileNav"></div>
+<div class="app">
+<aside class="side">
+  <div class="brand">TROCO QR<small>PDV • Vales de troco</small></div>
+  <div class="nav" id="nav"></div>
+</aside>
+<main class="main">
+  <div class="top"><div><h1 id="pageTitle">Dashboard</h1><div class="sub">Controle de troco com QR Code</div></div><div id="onlineStatus" class="onlineStatus neutral">CONECTANDO...</div></div>
+
+  <section id="dashboard" class="panel active">
+    <div class="grid">
+      <div class="card stat"><span class="muted">Vales disponíveis</span><b id="stAvail">0</b></div>
+      <div class="card stat"><span class="muted">Vales utilizados</span><b id="stUsed">0</b></div>
+      <div class="card stat"><span class="muted">Valor disponível</span><b id="stValue">R$ 0,00</b></div>
+      <div class="card stat"><span class="muted">Valores cadastrados</span><b id="stProducts">0</b></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <b>Como usar</b>
+      <div class="actions"><button onclick="openValidator()" style="min-width:190px;font-size:16px">VALIDAR QR AGORA</button></div><p class="hint">1. Cadastre os valores de troco. 2. No PDV, clique no valor desejado para montar o carrinho. 3. Ao clicar em “Gerar QR e imprimir”, cada vale recebe um código único e é gravado no Firebase antes da impressão. 4. No caixa/celular, use “Validar QR” para conferir e marcar o vale como utilizado.</p>
+    </div>
+  </section>
+
+  <section id="pdv" class="panel">
+    <div class="two">
+      <div class="card">
+        <h2>PDV — montar trocos</h2>
+        <div class="hint">Clique nos valores para adicionar. Cada clique acrescenta 1 unidade ao carrinho.</div>
+        <div class="denoms" id="denoms" style="margin-top:14px"></div>
+        <div class="card" style="margin-top:16px;background:#fafafa;padding:14px">
+          <b>Cadastrar novo valor no PDV</b>
+          <div class="hint" style="margin-top:4px">Cadastre aqui um valor que ainda não aparece nos botões.</div>
+          <div class="row" style="margin-top:10px;align-items:stretch">
+            <input id="pdvNewValue" type="number" min="0.01" step="0.01" placeholder="Ex.: 7,00" style="flex:1">
+            <button onclick="addProductFromPDV()">Cadastrar</button>
+          </div>
+        </div>
+        <div class="actions"><button class="secondary" onclick="clearCart()">Limpar carrinho</button></div>
+      </div>
+      <div class="card">
+        <div class="row" style="justify-content:space-between;align-items:flex-start;gap:12px">
+          <div><h2 style="margin:0">Carrinho</h2><div class="hint">Defina as quantidades antes de imprimir.</div></div>
+          <span id="cartCount" class="muted">0 vales</span>
+        </div>
+        <div id="cartList" style="margin-top:10px"></div>
+        <div class="cartTotal">Total: <span id="cartTotal">R$ 0,00</span></div>
+        <div class="actions">
+          <button onclick="printCart()">Gerar QR e imprimir</button>
+        <div class="hint" style="margin-top:8px">O QR Code só é criado para os vales desta impressão. Um novo clique em “Gerar QR e imprimir” cria novos códigos únicos.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cadastro" class="panel">
+    <div class="two">
+      <div class="card">
+        <h2>Valores de troco</h2>
+        <div class="hint">Aqui você cadastra somente os valores que ficarão disponíveis no PDV. Não é gerado QR Code nesta etapa.</div>
+        <label>Novo valor</label>
+        <input id="vValue" type="number" min="0.01" step="0.01" placeholder="Ex.: 5,00">
+        <div class="actions"><button onclick="addProduct()">Cadastrar valor</button></div>
+        <div id="productList" class="productList"></div>
+      </div>
+      <div class="card">
+        <h2>Modelo do vale</h2>
+        <label>Logo</label><input id="logoFile" type="file" accept="image/*">
+        <img id="logoPreview" class="logoPreview">
+        <label>Informação personalizada — linha 1</label><input id="line1" maxlength="80" placeholder="Ex.: Obrigado pela preferência">
+        <label>Informação personalizada — linha 2</label><input id="line2" maxlength="80">
+        <label>Informação personalizada — linha 3</label><input id="line3" maxlength="80">
+        <label>Informação personalizada — linha 4</label><input id="line4" maxlength="80">
+        <div class="hint">Esses textos ficam guardados no vale no momento da impressão. Não há QR Code no cadastro do valor.</div>
+        <div class="card" style="margin-top:16px;background:#fafafa">
+          <h3 style="margin-top:0">Prévia</h3>
+          <div id="previewBox" class="receipt" style="border:1px dashed #bbb;width:80mm;max-width:100%;margin:auto"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="vales" class="panel">
+    <div class="card">
+      <div class="row" style="justify-content:space-between"><div><h2 style="margin:0">Vales gerados</h2><div class="hint">Os registros aparecem aqui somente depois que o QR Code é gerado no PDV.</div></div><button onclick="printAvailable()">Imprimir disponíveis</button></div>
+      <div class="tablewrap"><table><thead><tr><th>Código</th><th>Valor</th><th>Status</th><th>Data</th><th>Ação</th></tr></thead><tbody id="voucherTable"></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="historico" class="panel">
+    <div class="card">
+      <div class="row" style="justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <h2 style="margin:0">Histórico de gerações</h2>
+          <div class="hint">Cada vez que você gera QR Codes pelo PDV, o lote fica registrado aqui.</div>
+        </div>
+        <button class="secondary" onclick="clearHistory()">Limpar histórico</button>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th>Data</th><th>Vales</th><th>Resumo</th><th>Total</th><th>Ação</th></tr>
+          </thead>
+          <tbody id="historyTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="validar" class="panel">
+    <div class="two">
+      <div class="card scanbox">
+        <h2>Validar QR Code</h2>
+        <div class="hint">No celular, abra o site pelo endereço HTTPS do GitHub Pages e permita o acesso à câmera. O navegador precisa estar em uma página segura (HTTPS).</div>
+        <select id="cameraSelect" class="cameraSelect hidden"></select>
+        <div id="reader"></div>
+        <div class="cameraActions"><button onclick="startScanner()">Abrir câmera</button><button class="secondary" onclick="stopScanner()">Parar</button><button class="secondary" onclick="refreshCameras()">Atualizar câmeras</button></div>
+        <div id="cameraStatus" class="hint" style="margin-top:10px"></div>
+      </div>
+      <div class="card">
+        <h2>Resultado</h2>
+        <div id="scanResult" class="result">Nenhum QR Code lido.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="config" class="panel">
+    <div class="card">
+      <h2>Configurações</h2>
+      <label>Nome do estabelecimento</label><input id="shopName" value="Seu Bar">
+      <label>Texto do rodapé</label><input id="footerText" value="Obrigado pela preferência!">
+      <div class="actions"><button onclick="saveConfig()">Salvar configurações</button><button class="secondary" onclick="exportData()">Exportar dados</button><button class="secondary" onclick="importData()">Importar dados</button><button class="danger" onclick="clearAll()">Apagar todos os dados</button></div>
+      <p class="hint">Os dados continuam neste navegador. O GitHub Pages hospeda o site, mas não funciona como banco compartilhado entre aparelhos. Para validar o mesmo vale em vários celulares/caixas, a próxima etapa é ligar o sistema a um banco online.</p>
+    </div>
+  </section>
+
+  <div id="printArea" class="printSheet"><div id="printContent"></div></div>
+</main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { getDatabase, ref, get, set, update, remove, push, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAhg4fVZjFJ2X6E1-uuI1l9InP-4-fDsbo",
+  authDomain: "bailao-a6ec5.firebaseapp.com",
+  databaseURL: "https://bailao-a6ec5-default-rtdb.firebaseio.com",
+  projectId: "bailao-a6ec5",
+  storageBucket: "bailao-a6ec5.firebasestorage.app",
+  messagingSenderId: "753759904210",
+  appId: "1:753759904210:web:320f66204e0ba47f62a80b"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+const rootRef = ref(db, 'trocoQR');
+const connectedRef = ref(db, '.info/connected');
+
+const KEY='trocoQR_v2';
+const OLD_KEY='trocoQR_v1';
+const DEFAULT_PRODUCTS=[2,5,10,20,50,100];
+
+let state = {
+  products: DEFAULT_PRODUCTS.slice(),
+  vouchers: [],
+  history: [],
+  config: {shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:''}
+};
+let cart={};
+let scanner=null;
+let logoData='';
+let lastScanCode='';
+let firebaseConnected=false;
+let remoteLoaded=false;
+let remoteListenerStarted=false;
+let authReady=false;
+let previousRemoteEmpty=true;
+
+function money(v){return (Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function id(){return 'VT-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,9).toUpperCase()}
+function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function openValidator(){go('validar');setTimeout(()=>startScanner(),350)}
+const pages=[['dashboard','🏠 Dashboard'],['pdv','💰 PDV'],['cadastro','🧾 Valores'],['vales','📋 Vales'],['historico','🕘 Histórico'],['validar','📷 Validar QR'],['config','⚙️ Configurações']];
+
+function setOnlineStatus(message,kind='neutral'){
+  const el=document.getElementById('onlineStatus');
+  if(!el)return;
+  el.textContent=message;
+  el.className='onlineStatus '+kind;
+}
+
+function normalizeRemote(data){
+  const productsRaw = Array.isArray(data?.products) ? data.products : Object.values(data?.products||{});
+  const products=[...new Set(productsRaw.map(Number).filter(v=>Number.isFinite(v)&&v>0))].sort((a,b)=>a-b);
+  const vouchers=Object.values(data?.vouchers||{}).filter(Boolean).map(v=>({...v,value:Number(v.value)||0}));
+  const history=Object.values(data?.history||{}).filter(Boolean);
+  const config={shopName:data?.config?.shopName||'Seu Bar',footerText:data?.config?.footerText||'Obrigado pela preferência!',logo:data?.config?.logo||''};
+  return {products:products.length?products:DEFAULT_PRODUCTS.slice(),vouchers,history,config};
+}
+function serializeState(s){
+  const vouchers={};
+  (s.vouchers||[]).forEach(v=>{if(v?.code)vouchers[v.code]=v});
+  const history={};
+  (s.history||[]).forEach(h=>{if(h?.id)history[h.id]=h});
+  return {products:[...(s.products||[])].sort((a,b)=>a-b),config:s.config||{},vouchers,history};
+}
+function hasLocalData(){
+  try{
+    const a=JSON.parse(localStorage.getItem(KEY)||'null');
+    const b=JSON.parse(localStorage.getItem(OLD_KEY)||'null');
+    const x=a||b;
+    return !!x && ((x.vouchers?.length||0)>0 || (x.history?.length||0)>0 || (x.products?.length||0)>0);
+  }catch(e){return false}
+}
+function getLocalState(){
+  try{
+    const a=JSON.parse(localStorage.getItem(KEY)||'null');
+    const b=JSON.parse(localStorage.getItem(OLD_KEY)||'null');
+    const x=a||b;
+    if(!x)return null;
+    return normalizeRemote({products:x.products,vouchers:Object.fromEntries((x.vouchers||[]).map(v=>[v.code,v])),history:Object.fromEntries((x.history||[]).map(h=>[h.id,h])),config:x.config});
+  }catch(e){return null}
+}
+
+async function authenticate(){
+  try{
+    const result=await signInAnonymously(auth);
+    authReady=!!result?.user;
+  }catch(e){
+    authReady=false;
+    console.warn('Login anônimo não disponível:',e);
+  }
+}
+
+async function loadRemoteState(){
+  const snap=await get(rootRef);
+  const data=snap.val();
+  if(!data){
+    state={products:DEFAULT_PRODUCTS.slice(),vouchers:[],history:[],config:{shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:''}};
+    previousRemoteEmpty=true;
+    const local=getLocalState();
+    if(local && hasLocalData()){
+      const ok=confirm('O banco online ainda está vazio, mas encontrei dados salvos neste aparelho. Deseja enviar esses dados para o Firebase agora?');
+      if(ok){
+        state=local;
+        await set(rootRef,serializeState(state));
+      }else{
+        await set(ref(db,'trocoQR/products'),state.products);
+      }
+    }else{
+      await set(ref(db,'trocoQR/products'),state.products);
+    }
+  }else{
+    state=normalizeRemote(data);
+    previousRemoteEmpty=false;
+  }
+  remoteLoaded=true;
+  logoData=state.config.logo||'';
+  fillConfig();
+  renderAll();
+}
+
+function subscribeRemote(){
+  if(remoteListenerStarted)return;
+  remoteListenerStarted=true;
+  onValue(rootRef,snap=>{
+    const data=snap.val();
+    if(!data)return;
+    state=normalizeRemote(data);
+    logoData=state.config.logo||logoData||'';
+    if(remoteLoaded)fillConfig();
+    renderAll();
+    setOnlineStatus(firebaseConnected?'ONLINE • dados sincronizados':'CONECTANDO...',firebaseConnected?'ok':'neutral');
+  },err=>{
+    console.error(err);
+    setOnlineStatus('ERRO NO FIREBASE','bad');
+    const msg=err?.message||'Verifique as regras do Realtime Database e o login anônimo.';
+    if(remoteLoaded) console.warn(msg);
+  });
+}
+
+onValue(connectedRef,snap=>{
+  firebaseConnected=!!snap.val();
+  if(firebaseConnected) setOnlineStatus('ONLINE • dados sincronizados','ok');
+  else setOnlineStatus('OFFLINE • sem sincronização','bad');
+});
+
+function go(p){
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  document.getElementById(p).classList.add('active');
+  document.getElementById('pageTitle').textContent=pages.find(x=>x[0]===p)[1].replace(/^\S+ /,'');
+  document.querySelectorAll('.nav button,.mobileNav button').forEach(b=>b.classList.toggle('active',b.dataset.page===p));
+  if(p==='vales')renderTable();
+  if(p==='historico')renderHistory();
+  if(p==='pdv')renderPDV();
+  if(p==='cadastro'){renderProducts();updatePreview()}
+  if(p==='validar')refreshCameras();
+}
+function initNav(){
+  let nav=document.getElementById('nav'),mob=document.getElementById('mobileNav');
+  pages.forEach(([id,label])=>{[nav,mob].forEach(el=>{let b=document.createElement('button');b.textContent=label;b.dataset.page=id;b.onclick=()=>go(id);el.appendChild(b)})});
+  go('dashboard');
+}
+function renderAll(){
+  const avail=state.vouchers.filter(v=>!v.used);
+  document.getElementById('stAvail').textContent=avail.length;
+  document.getElementById('stUsed').textContent=state.vouchers.filter(v=>v.used).length;
+  document.getElementById('stValue').textContent=money(avail.reduce((a,v)=>a+Number(v.value||0),0));
+  document.getElementById('stProducts').textContent=state.products.length;
+  renderTable();renderHistory();renderPDV();renderProducts();updatePreview();
+}
+function renderProducts(){
+  let el=document.getElementById('productList');if(!el)return;
+  el.innerHTML=state.products.length?state.products.map(v=>`<div class="productItem"><span class="productValue">${money(v)}</span><button class="danger small" onclick="removeProduct(${v})">Excluir</button></div>`).join(''):'<div class="empty" style="grid-column:1/-1">Nenhum valor cadastrado.</div>';
+}
+async function addProduct(){
+  if(!firebaseConnected)return alert('Sem conexão com o Firebase.');
+  let value=+(document.getElementById('vValue').value||0);if(value<=0)return alert('Informe um valor válido.');
+  value=Math.round(value*100)/100;if(state.products.includes(value))return alert('Esse valor já está cadastrado.');
+  const next=[...state.products,value].sort((a,b)=>a-b);
+  try{await set(ref(db,'trocoQR/products'),next);document.getElementById('vValue').value='';}
+  catch(e){alert('Não foi possível cadastrar o valor: '+(e?.message||e))}
+}
+async function addProductFromPDV(){
+  if(!firebaseConnected)return alert('Sem conexão com o Firebase.');
+  let input=document.getElementById('pdvNewValue');let value=+(input?.value||0);if(value<=0)return alert('Informe um valor válido.');
+  value=Math.round(value*100)/100;if(state.products.includes(value))return alert('Esse valor já está cadastrado no PDV.');
+  const next=[...state.products,value].sort((a,b)=>a-b);
+  try{await set(ref(db,'trocoQR/products'),next);if(input)input.value='';}
+  catch(e){alert('Não foi possível cadastrar o valor: '+(e?.message||e))}
+}
+async function removeProduct(value){
+  if(!firebaseConnected)return alert('Sem conexão com o Firebase.');
+  if(!confirm('Excluir o valor '+money(value)+' do PDV?'))return;
+  delete cart[value];
+  try{await set(ref(db,'trocoQR/products'),state.products.filter(v=>v!==value))}
+  catch(e){alert('Não foi possível excluir: '+(e?.message||e))}
+}
+function renderPDV(){
+  let d=document.getElementById('denoms');if(!d)return;
+  d.innerHTML=state.products.length?state.products.map(v=>`<button class="denomBtn" onclick="addToCart(${v})">${money(v)}</button>`).join(''):'<div class="empty" style="grid-column:1/-1">Cadastre valores na aba “Valores”.</div>';
+  renderCart();
+}
+function addToCart(value){cart[value]=(cart[value]||0)+1;renderCart()}
+function setCartQty(value,qty){qty=Math.max(0,parseInt(qty||0));if(qty===0)delete cart[value];else cart[value]=qty;renderCart()}
+function changeCartQty(value,delta){setCartQty(value,(cart[value]||0)+delta)}
+function clearCart(){cart={};renderCart()}
+function cartItems(){return Object.entries(cart).map(([value,qty])=>({value:Number(value),qty:Number(qty)})).filter(x=>x.qty>0).sort((a,b)=>a.value-b.value)}
+function renderCart(){
+  let el=document.getElementById('cartList'),items=cartItems();if(!el)return;
+  let count=items.reduce((a,x)=>a+x.qty,0),total=items.reduce((a,x)=>a+x.value*x.qty,0);
+  document.getElementById('cartCount').textContent=count+' vale'+(count===1?'':'s');
+  document.getElementById('cartTotal').textContent=money(total);
+  el.innerHTML=items.length?items.map(x=>`<div class="cartRow"><div class="cartInfo"><div class="cartValue">${money(x.value)}</div><div class="cartQty">${money(x.value)} cada</div></div><div class="cartControls"><button class="qtyBtn" onclick="changeCartQty(${x.value},-1)">−</button><span class="qtyNum">${x.qty}</span><button class="qtyBtn" onclick="changeCartQty(${x.value},1)">+</button><button class="qtyBtn secondary" onclick="setCartQty(${x.value},0)">×</button></div></div>`).join(''):'<div class="empty">Nenhum vale no carrinho.</div>';
+}
+function currentLines(){return ['line1','line2','line3','line4'].map(id=>document.getElementById(id)?.value||'').filter(Boolean)}
+function currentLogo(){return logoData||state.config.logo||''}
+function voucherHTML(v){
+  let lines=v.lines||currentLines(),logo=v.logo||currentLogo();
+  return `<div class="receipt" data-code="${escapeHtml(v.code)}">${logo?`<img class="logo" src="${logo}">`:''}<div class="sep"></div><div class="receiptMain"><div class="receiptText"><div class="title">TROCO</div><div class="value">${money(v.value)}</div></div><div class="receiptQr"></div></div>${lines.length?`<div class="sep"></div><div class="receiptInfo">${lines.map(x=>`<div>${escapeHtml(x)}</div>`).join('')}</div>`:''}<div class="receiptFooter">${escapeHtml(state.config.footerText||'')}</div><div class="receiptCode">${escapeHtml(v.code)}</div></div>`
+}
+function updatePreview(){
+  let box=document.getElementById('previewBox');if(!box)return;
+  let val=+(document.getElementById('vValue').value||5);let temp={value:val,code:'VT-PREVIEW',lines:currentLines(),logo:currentLogo()};
+  box.innerHTML=voucherHTML(temp);
+  let q=box.querySelector('.receiptQr');new QRCode(q,{text:JSON.stringify({app:'trocoQR',code:temp.code,value:temp.value}),width:150,height:150,correctLevel:QRCode.CorrectLevel.M});
+}
+function generateVoucher(value){return {code:id(),value:Number(value),created:new Date().toISOString(),used:false,usedAt:null,lines:currentLines(),logo:currentLogo()}}
+function buildPrintReceipt(v){
+  let temp=document.createElement('div');temp.innerHTML=voucherHTML(v);let receipt=temp.firstElementChild;
+  let q=receipt.querySelector('.receiptQr');new QRCode(q,{text:JSON.stringify({app:'trocoQR',code:v.code,value:v.value}),width:220,height:220,correctLevel:QRCode.CorrectLevel.M});
+  let canvas=q.querySelector('canvas');if(canvas)q.innerHTML=`<img src="${canvas.toDataURL('image/png')}" alt="QR Code">`;
+  return receipt.outerHTML;
+}
+function openPrintWindow(vouchers){
+  if(!vouchers.length)return alert('Nenhum vale para imprimir.');
+  let w=window.open('', '_blank', 'width=420,height=700');
+  if(!w)return alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site e tente novamente.');
+  let receipts=vouchers.map(buildPrintReceipt).join('');
+  w.document.open();
+  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Impressão - Troco QR</title><style>@page{size:80mm auto;margin:0}html,body{margin:0;padding:0;background:#fff;color:#000;width:80mm}body{font-family:Arial,Helvetica,sans-serif}.receipt{width:80mm;margin:0;padding:3mm 3.5mm;font-family:Arial,Helvetica,sans-serif;color:#000;text-align:center;page-break-after:always;box-sizing:border-box}.receipt:last-child{page-break-after:auto}.receipt .logo{max-width:30mm;max-height:15mm;object-fit:contain;margin:0 auto 2mm}.receipt .sep{border-top:1px solid #000;margin:2mm 0}.receiptMain{display:flex;align-items:center;justify-content:space-between;gap:3mm;text-align:left}.receiptText{flex:1}.receiptText .title{font-size:8mm;font-weight:900;line-height:1}.receiptText .value{font-size:9mm;font-weight:900;margin-top:2mm}.receiptQr{width:30mm;height:30mm;display:flex;align-items:center;justify-content:center}.receiptQr img{width:30mm!important;height:30mm!important;display:block}.receiptInfo{font-size:3.2mm;line-height:1.45;text-align:center;margin-top:2mm}.receiptFooter{font-size:2.8mm;margin-top:2mm}.receiptCode{font-size:2.7mm;margin-top:1.5mm;letter-spacing:.2mm}@media print{html,body{width:80mm!important;margin:0!important;padding:0!important}.receipt{width:80mm!important;margin:0!important}}</style></head><body>${receipts}<script>window.addEventListener('load',function(){setTimeout(function(){window.focus();window.print()},300)});window.addEventListener('afterprint',function(){setTimeout(function(){window.close()},200)});<\\/script></body></html>`);
+  w.document.close();
+}
+async function printCart(){
+  if(!firebaseConnected)return alert('Sem conexão com o Firebase. Aguarde ficar ONLINE antes de gerar os vales.');
+  let items=cartItems();if(!items.length)return alert('Adicione pelo menos um vale ao carrinho.');
+  let created=[];items.forEach(item=>{for(let i=0;i<item.qty;i++)created.push(generateVoucher(item.value))});
+  let batch={id:'LOT-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,7).toUpperCase(),created:new Date().toISOString(),items,total:items.reduce((a,x)=>a+x.value*x.qty,0),quantity:created.length,voucherCodes:created.map(v=>v.code)};
+  const updates={};
+  created.forEach(v=>{updates['vouchers/'+v.code]=v});
+  updates['history/'+batch.id]=batch;
+  try{
+    await update(rootRef,updates);
+    cart={};renderCart();
+    openPrintWindow(created);
+  }catch(e){alert('Erro ao gravar no Firebase. Os QR Codes não foram gerados para impressão.\n\n'+(e?.message||e))}
+}
+function buildReceipt(v){
+  let temp=document.createElement('div');temp.innerHTML=voucherHTML(v);let receipt=temp.firstElementChild;
+  let q=receipt.querySelector('.receiptQr');new QRCode(q,{text:JSON.stringify({app:'trocoQR',code:v.code,value:v.value}),width:220,height:220,correctLevel:QRCode.CorrectLevel.M});
+  let canvas=q.querySelector('canvas');if(canvas)q.innerHTML=`<img src="${canvas.toDataURL('image/png')}" alt="QR Code">`;
+  return receipt;
+}
+function renderTable(){
+  let tb=document.getElementById('voucherTable');if(!tb)return;tb.innerHTML='';
+  let vs=state.vouchers.slice().sort((a,b)=>new Date(b.created)-new Date(a.created));
+  if(!vs.length){tb.innerHTML='<tr><td colspan="5"><div class="empty">Nenhum vale gerado ainda. Vá ao PDV e clique em “Gerar QR e imprimir”.</div></td></tr>';return}
+  vs.forEach(v=>{let tr=document.createElement('tr');tr.innerHTML=`<td>${escapeHtml(v.code)}</td><td>${money(v.value)}</td><td>${v.used?'<span style="color:#b91c1c;font-weight:700">UTILIZADO</span>':'<span style="color:#15803d;font-weight:700">DISPONÍVEL</span>'}</td><td>${new Date(v.created).toLocaleString('pt-BR')}</td><td>${!v.used?`<button class="small" onclick="printOne('${escapeHtml(v.code)}')">Imprimir</button>`:'—'}</td>`;tb.appendChild(tr)})
+}
+function renderHistory(){
+  let tb=document.getElementById('historyTable');if(!tb)return;tb.innerHTML='';
+  let hs=state.history.slice().sort((a,b)=>new Date(b.created)-new Date(a.created));
+  if(!hs.length){tb.innerHTML='<tr><td colspan="5"><div class="empty">Nenhuma geração registrada ainda. Use o PDV e clique em “Gerar QR e imprimir”.</div></td></tr>';return}
+  hs.forEach(h=>{let summary=(h.items||[]).map(x=>`${x.qty}× ${money(x.value)}`).join(' + ');let tr=document.createElement('tr');tr.innerHTML=`<td>${new Date(h.created).toLocaleString('pt-BR')}</td><td>${h.quantity||0}</td><td>${escapeHtml(summary)}</td><td>${money(h.total)}</td><td><button class="small" onclick="reprintHistory('${escapeHtml(h.id)}')">Reimprimir</button></td>`;tb.appendChild(tr)})
+}
+function reprintHistory(id){let h=state.history.find(x=>x.id===id);if(!h)return;let vs=(h.voucherCodes||[]).map(code=>state.vouchers.find(v=>v.code===code)).filter(Boolean);if(!vs.length)return alert('Os vales deste lote não foram encontrados.');openPrintWindow(vs)}
+async function clearHistory(){
+  if(!state.history.length)return;if(!confirm('Apagar somente o histórico de gerações? Os vales continuarão cadastrados.'))return;
+  if(!firebaseConnected)return alert('Sem conexão com o Firebase.');
+  try{await remove(ref(db,'trocoQR/history'))}catch(e){alert('Não foi possível limpar o histórico: '+(e?.message||e))}
+}
+function printOne(code){let v=state.vouchers.find(x=>x.code===code);if(!v)return;openPrintWindow([v])}
+function printAvailable(){let vs=state.vouchers.filter(v=>!v.used);if(!vs.length)return alert('Não há vales disponíveis.');openPrintWindow(vs)}
+
+async function refreshCameras(){
+  let status=document.getElementById('cameraStatus'),select=document.getElementById('cameraSelect');if(!status||!select)return;
+  if(!window.isSecureContext){status.innerHTML='<div class="alert badbg">Este site não está em um contexto seguro. No GitHub Pages, use o endereço <b>https://</b>.</div>';select.classList.add('hidden');return}
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){status.innerHTML='<div class="alert badbg">Este navegador não disponibilizou acesso à câmera.</div>';return}
+  try{
+    let stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}});stream.getTracks().forEach(t=>t.stop());
+    let cameras=await Html5Qrcode.getCameras();select.innerHTML='';cameras.forEach((cam,i)=>{let o=document.createElement('option');o.value=cam.id;o.textContent=cam.label||('Câmera '+(i+1));select.appendChild(o)});
+    if(cameras.length>1)select.classList.remove('hidden');else select.classList.add('hidden');
+    status.textContent=cameras.length?'Câmera pronta. Toque em “Abrir câmera”.':'';
+  }catch(e){select.classList.add('hidden');status.innerHTML='<div class="alert warnbg">Permita a câmera no navegador e toque em “Atualizar câmeras”.</div>'}
+}
+async function startScanner(){
+  let status=document.getElementById('cameraStatus');if(scanner)return;
+  if(!window.isSecureContext)return status.innerHTML='<div class="alert badbg">Abra o site pelo <b>HTTPS</b> do GitHub Pages para usar a câmera.</div>';
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return status.innerHTML='<div class="alert badbg">Seu navegador não oferece acesso à câmera.</div>';
+  try{
+    let cameras=await Html5Qrcode.getCameras();if(!cameras.length)throw new Error('Nenhuma câmera encontrada.');
+    let select=document.getElementById('cameraSelect');let cameraId=select.value||cameras.find(c=>/back|rear|trás|environment/i.test(c.label))?.id||cameras[0].id;
+    scanner=new Html5Qrcode('reader');await scanner.start(cameraId,{fps:12,qrbox:(vw,vh)=>{let s=Math.min(vw,vh,280);return {width:s,height:s}}},txt=>handleScan(txt),()=>{});
+    status.textContent='Câmera aberta. Aponte para o QR Code.';
+  }catch(e){scanner=null;status.innerHTML='<div class="alert badbg"><b>Não foi possível abrir a câmera.</b><br>'+escapeHtml(e?.message||'Verifique a permissão da câmera e o HTTPS.')+'</div>'}
+}
+async function stopScanner(){if(!scanner)return;try{await scanner.stop();scanner.clear()}catch(e){}scanner=null;document.getElementById('cameraStatus').textContent='Câmera parada.'}
+function handleScan(txt){if(!txt||txt===lastScanCode)return;lastScanCode=txt;setTimeout(()=>lastScanCode='',1500);try{let data=JSON.parse(txt);showVoucher(data.code)}catch(e){showVoucher(String(txt).trim())}}
+function showVoucher(code){
+  let v=state.vouchers.find(x=>x.code===code),el=document.getElementById('scanResult');
+  if(!v){el.innerHTML='<div class="alert badbg"><b>QR NÃO RECONHECIDO</b><br>Este vale não existe no banco online.</div>';return}
+  if(v.used){el.innerHTML=`<div class="alert badbg"><b>VALE JÁ UTILIZADO</b><br>Valor: ${money(v.value)}<br>Código: ${escapeHtml(v.code)}<br>Utilizado em: ${new Date(v.usedAt).toLocaleString('pt-BR')}</div>`;return}
+  el.innerHTML=`<div class="alert okbg"><b>VALE VÁLIDO</b><br>Valor: <strong>${money(v.value)}</strong><br>Código: ${escapeHtml(v.code)}<div class="actions"><button class="danger" onclick="useScanned('${escapeHtml(v.code)}')">UTILIZAR VALE</button></div></div>`
+}
+async function useScanned(code){
+  if(!firebaseConnected)return alert('Sem conexão com o Firebase. Não é seguro validar o vale sem conexão.');
+  const voucherRef=ref(db,'trocoQR/vouchers/'+code);
+  try{
+    const result=await runTransaction(voucherRef,current=>{
+      if(current==null)return current;
+      if(current.used)return;
+      return {...current,used:true,usedAt:new Date().toISOString()};
+    });
+    if(!result.committed){showVoucher(code);return}
+    state.vouchers=state.vouchers.map(v=>v.code===code?result.snapshot.val():v);
+    renderAll();showVoucher(code);
+  }catch(e){alert('Não foi possível validar o vale no Firebase: '+(e?.message||e))}
+}
+function readLogo(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{logoData=r.result;document.getElementById('logoPreview').src=logoData;document.getElementById('logoPreview').style.display='block';updatePreview()};r.readAsDataURL(f)}
+async function saveConfig(){
+  if(!firebaseConnected)return alert('Sem conexão com o Firebase.');
+  const cfg={shopName:document.getElementById('shopName').value,footerText:document.getElementById('footerText').value,logo:logoData||state.config.logo||''};
+  try{await set(ref(db,'trocoQR/config'),cfg);state.config=cfg;alert('Configurações salvas online.')}
+  catch(e){alert('Não foi possível salvar: '+(e?.message||e))}
+}
+function exportData(){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}));a.download='troco-qr-backup-online.json';a.click();URL.revokeObjectURL(a.href)}
+async function importData(){
+  let i=document.createElement('input');i.type='file';i.accept='.json';
+  i.onchange=()=>{let r=new FileReader();r.onload=async()=>{try{
+    let incoming=JSON.parse(r.result);
+    incoming.products=[...new Set((incoming.products||DEFAULT_PRODUCTS).map(Number).filter(v=>v>0))].sort((a,b)=>a-b);
+    incoming.vouchers=Array.isArray(incoming.vouchers)?incoming.vouchers:[];incoming.history=Array.isArray(incoming.history)?incoming.history:[];incoming.config=incoming.config||{};
+    if(!confirm('Importar este backup para o banco online? Isso substituirá os dados online atuais.'))return;
+    await set(rootRef,serializeState(incoming));alert('Dados importados para o Firebase.');
+  }catch(e){alert('Arquivo inválido ou falha ao importar: '+(e?.message||e))}};r.readAsText(i.files[0])};i.click()
+}
+async function clearAll(){
+  if(!confirm('Apagar TODOS os valores, vales, histórico e configurações do banco online?'))return;
+  if(!firebaseConnected)return alert('Sem conexão com o Firebase.');
+  try{await set(rootRef,{products:DEFAULT_PRODUCTS.slice(),config:{shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:''}});cart={};alert('Banco online limpo.');}
+  catch(e){alert('Não foi possível apagar: '+(e?.message||e))}
+}
+function fillConfig(){
+  const shop=document.getElementById('shopName'),footer=document.getElementById('footerText');
+  if(shop)shop.value=state.config.shopName||'';if(footer)footer.value=state.config.footerText||'';
+  const preview=document.getElementById('logoPreview');if(preview&&logoData){preview.src=logoData;preview.style.display='block'}
+}
+
+['line1','line2','line3','line4','vValue'].forEach(x=>document.getElementById(x).addEventListener('input',updatePreview));
+document.getElementById('logoFile').addEventListener('change',readLogo);
+
+Object.assign(window,{openValidator,go,addProduct,addProductFromPDV,removeProduct,addToCart,setCartQty,changeCartQty,clearCart,printCart,printOne,printAvailable,reprintHistory,clearHistory,refreshCameras,startScanner,stopScanner,useScanned,saveConfig,exportData,importData,clearAll});
+
+async function boot(){
+  initNav();
+  fillConfig();
+  renderAll();
+  setOnlineStatus('CONECTANDO AO FIREBASE...','neutral');
+  await authenticate();
+  try{
+    await loadRemoteState();
+    subscribeRemote();
+    if(firebaseConnected) setOnlineStatus('ONLINE • dados sincronizados','ok');
+    else setOnlineStatus(authReady?'CONECTANDO...':'AGUARDANDO AUTENTICAÇÃO','neutral');
+  }catch(e){
+    console.error(e);
+    setOnlineStatus('ERRO NO FIREBASE','bad');
+    alert('O site abriu, mas não conseguiu acessar o banco online.\n\n'+(e?.message||e)+'\n\nConfira o Realtime Database e as regras de segurança do Firebase.');
+  }
+}
+boot();
+</script>
+
+</body>
+</html>
