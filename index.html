@@ -49,7 +49,8 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
 
 /* Validação de QR em destaque */
 .quickValidate{display:none}
-.validatorPanel{display:block}
+/* A validação é uma página dedicada; nunca fica aberta por padrão. */
+.validatorPanel{display:none}
 .validatorHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
 .validatorTitle{font-size:25px;font-weight:900;margin:0}
 .validatorSubtitle{color:var(--muted);font-size:13px;margin-top:4px}
@@ -98,7 +99,7 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
 @media print{
  html,body{background:#fff!important;margin:0!important;padding:0!important}
  body{width:80mm!important}
- .mobileNav,.side,.top,.main>.panel{display:none!important}
+ .mobileNav,.side,.top,.main>.panel,.quickValidate,.scanModal{display:none!important}
  .app,.main{display:block!important;min-height:0!important;width:80mm!important;max-width:none!important;margin:0!important;padding:0!important;background:#fff!important}
  #printArea{display:block!important;width:80mm!important;margin:0!important;padding:0!important}
  #printContent{display:block!important;width:80mm!important;margin:0!important;padding:0!important}
@@ -252,7 +253,6 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
     </div>
   </section>
 
-  <button id="quickValidateBtn" class="quickValidate" onclick="openValidator()">📷 VALIDAR QR</button>
   <div id="scanModal" class="scanModal hidden" role="dialog" aria-modal="true" aria-labelledby="scanModalStatus">
     <div id="scanModalCard" class="scanModalCard valid">
       <button class="scanModalClose" onclick="closeScanModal()" aria-label="Fechar">×</button>
@@ -608,7 +608,16 @@ function soundValid(){initScanAudio();tone(880,.11,0,'sine',.09);tone(1175,.16,.
 function soundUsed(){initScanAudio();tone(420,.13,0,'square',.07);tone(300,.18,.14,'square',.07)}
 function soundInvalid(){initScanAudio();tone(220,.16,0,'sawtooth',.06);tone(180,.20,.16,'sawtooth',.06)}
 function closeScanModal(){document.getElementById('scanModal')?.classList.add('hidden')}
-function scanAgain(){closeScanModal();lastScanCode='';setTimeout(()=>startScanner(),150)}
+async function scanAgain(){
+  closeScanModal();
+  lastScanCode='';
+  const result=document.getElementById('scanResult');
+  if(result){result.classList.add('hidden');result.innerHTML='';}
+  await stopScanner();
+  const reader=document.getElementById('reader');
+  if(reader)reader.innerHTML='';
+  setTimeout(()=>startScanner(),180);
+}
 function formatDateBR(value){try{return new Date(value).toLocaleString('pt-BR')}catch(e){return '-'}}
 function showValidationModal(kind,v,extra=''){
   const modal=document.getElementById('scanModal');
@@ -628,10 +637,11 @@ function showValidationModal(kind,v,extra=''){
   code.textContent=v?.code?'Código: '+v.code:'';
   info.innerHTML=extra||'';
   actions.innerHTML='';
-  if(kind==='valid' && v?.code){
-    const use=document.createElement('button');use.className='danger';use.textContent='⛔ INUTILIZAR VALE';use.onclick=()=>useScannedFromModal(v.code);actions.appendChild(use);
-  }
-  const again=document.createElement('button');again.className='secondary';again.textContent='📷 LER OUTRO QR';again.onclick=scanAgain;actions.appendChild(again);
+  const again=document.createElement('button');
+  again.className='secondary';
+  again.textContent='📷 LER OUTRO QR';
+  again.onclick=scanAgain;
+  actions.appendChild(again);
   modal.classList.remove('hidden');
 }
 async function useScannedFromModal(code){
@@ -679,6 +689,8 @@ async function startScanner(){
     return;
   }
   try{
+    const readerEl=document.getElementById('reader');
+    if(readerEl)readerEl.innerHTML='';
     scanner=new Html5Qrcode('reader');
     const config={fps:12,qrbox:(vw,vh)=>{const s=Math.floor(Math.min(vw,vh)*0.78);return {width:s,height:s}}};
     try{
@@ -714,18 +726,29 @@ async function handleScan(txt){
   if(!code){showValidationModal('invalid',null,'O QR lido não contém um código de vale válido.');return}
   if(!firebaseConnected){showValidationModal('offline',null,'O celular está sem conexão com o Firebase. Conecte a internet antes de validar o vale.');return}
   try{
-    const snap=await get(ref(db,'trocoQR/vouchers/'+code));
-    const v=snap.val();
-    if(!v){showValidationModal('invalid',null,'Este código não foi encontrado no banco online.');return}
-    if(v.used){
-      showValidationModal('used',v,'<b>Este vale já foi inutilizado.</b><br><b>Data/hora de utilização:</b> '+formatDateBR(v.usedAt));
-      updateScanResultUsed(v);
+    const voucherRef=ref(db,'trocoQR/vouchers/'+code);
+    const result=await runTransaction(voucherRef,current=>{
+      if(current==null)return;
+      if(current.used)return;
+      return {...current,used:true,usedAt:new Date().toISOString()};
+    });
+    if(!result.committed){
+      const v=result.snapshot?.val();
+      if(v?.used){
+        updateScanResultUsed(v);
+        showValidationModal('used',v,'<b>Este vale já foi inutilizado.</b><br><b>Data/hora:</b> '+formatDateBR(v.usedAt));
+        return;
+      }
+      showValidationModal('invalid',null,'Não foi possível confirmar este vale no banco online.');
       return;
     }
-    showValidationModal('valid',v,'<b>Vale disponível para uso.</b><br>Confira o valor e toque em <b>INUTILIZAR VALE</b> somente quando o vale for aceito no caixa.');
+    const v=result.snapshot.val();
+    state.vouchers=state.vouchers.map(x=>x.code===code?v:x);
+    renderAll();
     updateScanResultValid(v);
+    showValidationModal('valid',v,'<b>Vale válido.</b><br>Este vale foi <b>inutilizado automaticamente</b> no Firebase e não poderá ser usado novamente.');
   }catch(e){
-    showValidationModal('offline',null,escapeHtml(e?.message||'Falha ao consultar o banco online.'));
+    showValidationModal('offline',null,escapeHtml(e?.message||'Falha ao validar o vale no banco online.'));
   }
 }
 function updateScanResultValid(v){
@@ -820,7 +843,7 @@ function fillConfig(){
 document.getElementById('logoFile').addEventListener('change',readLogo);
 document.getElementById('logoWidth').addEventListener('input',e=>{document.getElementById('logoWidthValue').textContent=e.target.value+' mm';updatePreview()});
 
-Object.assign(window,{openValidator,closeValidatorPage,go,addProduct,addProductFromPDV,removeProduct,addToCart,setCartQty,changeCartQty,clearCart,printCart,printOne,printAvailable,reprintHistory,clearHistory,refreshCameras,startScanner,stopScanner,useScanned,useScannedFromModal,closeScanModal,scanAgain,saveVoucherModel,saveConfig,exportData,importData,clearAll});
+Object.assign(window,{openValidator,closeValidatorPage,go,addProduct,addProductFromPDV,removeProduct,addToCart,setCartQty,changeCartQty,clearCart,printCart,printOne,printAvailable,reprintHistory,clearHistory,refreshCameras,startScanner,stopScanner,useScanned,closeScanModal,scanAgain,saveVoucherModel,saveConfig,exportData,importData,clearAll});
 
 async function boot(){
   initNav();
