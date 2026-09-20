@@ -49,7 +49,7 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
 
 /* Validação de QR em destaque */
 .quickValidate{display:none}
-.validatorPanel{display:block}
+.validatorPanel{display:none}.validatorPanel.active{display:block}
 .validatorHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
 .validatorTitle{font-size:25px;font-weight:900;margin:0}
 .validatorSubtitle{color:var(--muted);font-size:13px;margin-top:4px}
@@ -183,6 +183,8 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
         <label>Informação personalizada — linha 3</label><input id="line3" maxlength="80">
         <label>Informação personalizada — linha 4</label><input id="line4" maxlength="80">
         <div class="hint">Esses textos ficam guardados no vale no momento da impressão. Não há QR Code no cadastro do valor.</div>
+        <div class="actions"><button onclick="saveVoucherModel()">💾 SALVAR MODELO DO VALE NO FIREBASE</button></div>
+        <div class="hint" id="modelSaveStatus" style="margin-top:8px"></div>
         <div class="card" style="margin-top:16px;background:#fafafa">
           <h3 style="margin-top:0">Prévia</h3>
           <div id="previewBox" class="receipt" style="border:1px dashed #bbb;width:80mm;max-width:100%;margin:auto"></div>
@@ -328,7 +330,7 @@ function normalizeRemote(data){
   const vouchers=Object.values(data?.vouchers||{}).filter(Boolean).map(v=>({...v,value:Number(v.value)||0}));
   const history=Object.values(data?.history||{}).filter(Boolean);
   const rawLogoWidth=Number(data?.config?.logoWidth);
-  const config={shopName:data?.config?.shopName||'Seu Bar',footerText:data?.config?.footerText||'Obrigado pela preferência!',logo:data?.config?.logo||'',logoWidth:Number.isFinite(rawLogoWidth)?Math.max(0,Math.min(80,rawLogoWidth)):30};
+  const config={shopName:data?.config?.shopName||'Seu Bar',footerText:data?.config?.footerText||'Obrigado pela preferência!',logo:data?.config?.logo||'',logoWidth:Number.isFinite(rawLogoWidth)?Math.max(0,Math.min(80,rawLogoWidth)):30,line1:data?.config?.line1||'',line2:data?.config?.line2||'',line3:data?.config?.line3||'',line4:data?.config?.line4||''};
   return {products:products.length?products:DEFAULT_PRODUCTS.slice(),vouchers,history,config};
 }
 function serializeState(s){
@@ -370,7 +372,7 @@ async function loadRemoteState(){
   const snap=await get(rootRef);
   const data=snap.val();
   if(!data){
-    state={products:DEFAULT_PRODUCTS.slice(),vouchers:[],history:[],config:{shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:'',logoWidth:30}};
+    state={products:DEFAULT_PRODUCTS.slice(),vouchers:[],history:[],config:{shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:'',logoWidth:30,line1:'',line2:'',line3:'',line4:''}};
     previousRemoteEmpty=true;
     const local=getLocalState();
     if(local && hasLocalData()){
@@ -724,7 +726,7 @@ async function useScanned(code){
 function readLogo(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{logoData=r.result;document.getElementById('logoPreview').src=logoData;document.getElementById('logoPreview').style.display='block';updatePreview()};r.readAsDataURL(f)}
 async function saveConfig(){
   if(!firebaseConnected)return alert('Sem conexão com o Firebase.');
-  const cfg={shopName:document.getElementById('shopName').value,footerText:document.getElementById('footerText').value,logo:logoData||state.config.logo||'',logoWidth:currentLogoWidth()};
+  const cfg={shopName:document.getElementById('shopName').value,footerText:document.getElementById('footerText').value,logo:logoData||state.config.logo||'',logoWidth:currentLogoWidth(),line1:document.getElementById('line1')?.value||'',line2:document.getElementById('line2')?.value||'',line3:document.getElementById('line3')?.value||'',line4:document.getElementById('line4')?.value||''};
   try{await set(ref(db,'trocoQR/config'),cfg);state.config=cfg;alert('Configurações salvas online.')}
   catch(e){alert('Não foi possível salvar: '+(e?.message||e))}
 }
@@ -742,12 +744,32 @@ async function importData(){
 async function clearAll(){
   if(!confirm('Apagar TODOS os valores, vales, histórico e configurações do banco online?'))return;
   if(!firebaseConnected)return alert('Sem conexão com o Firebase.');
-  try{await set(rootRef,{products:DEFAULT_PRODUCTS.slice(),config:{shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:'',logoWidth:30}});cart={};alert('Banco online limpo.');}
+  try{await set(rootRef,{products:DEFAULT_PRODUCTS.slice(),config:{shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:'',logoWidth:30,line1:'',line2:'',line3:'',line4:''}});cart={};alert('Banco online limpo.');}
   catch(e){alert('Não foi possível apagar: '+(e?.message||e))}
+}
+async function saveVoucherModel(){
+  if(!firebaseConnected)return alert('Sem conexão com o Firebase. Aguarde o status ONLINE antes de salvar.');
+  const btns=[...document.querySelectorAll('#cadastro button')];
+  btns.forEach(b=>{if((b.textContent||'').includes('SALVAR MODELO'))b.disabled=true});
+  const status=document.getElementById('modelSaveStatus');
+  const cfg={...state.config,shopName:document.getElementById('shopName')?.value||state.config.shopName||'Seu Bar',footerText:document.getElementById('footerText')?.value||state.config.footerText||'Obrigado pela preferência!',logo:logoData||state.config.logo||'',logoWidth:currentLogoWidth(),line1:document.getElementById('line1')?.value||'',line2:document.getElementById('line2')?.value||'',line3:document.getElementById('line3')?.value||'',line4:document.getElementById('line4')?.value||''};
+  try{
+    await set(ref(db,'trocoQR/config'),cfg);
+    state.config=cfg;
+    logoData=cfg.logo||'';
+    if(status){status.textContent='✅ Modelo salvo no Firebase com sucesso.';status.style.color='#15803d';}
+    fillConfig();
+    updatePreview();
+  }catch(e){
+    if(status){status.textContent='❌ Não foi possível salvar no Firebase: '+(e?.message||e);status.style.color='#b91c1c';}
+    else alert('Não foi possível salvar o modelo: '+(e?.message||e));
+  }finally{btns.forEach(b=>b.disabled=false)}
 }
 function fillConfig(){
   const shop=document.getElementById('shopName'),footer=document.getElementById('footerText');
   if(shop)shop.value=state.config.shopName||'';if(footer)footer.value=state.config.footerText||'';
+  const l1=document.getElementById('line1'),l2=document.getElementById('line2'),l3=document.getElementById('line3'),l4=document.getElementById('line4');
+  if(l1)l1.value=state.config.line1||'';if(l2)l2.value=state.config.line2||'';if(l3)l3.value=state.config.line3||'';if(l4)l4.value=state.config.line4||'';
   const preview=document.getElementById('logoPreview');if(preview&&logoData){preview.src=logoData;preview.style.display='block'}
   const slider=document.getElementById('logoWidth'),valueEl=document.getElementById('logoWidthValue');
   const w=Math.max(0,Math.min(80,Number(state.config.logoWidth??30)||0));
@@ -759,7 +781,7 @@ function fillConfig(){
 document.getElementById('logoFile').addEventListener('change',readLogo);
 document.getElementById('logoWidth').addEventListener('input',e=>{document.getElementById('logoWidthValue').textContent=e.target.value+' mm';updatePreview()});
 
-Object.assign(window,{openValidator,go,addProduct,addProductFromPDV,removeProduct,addToCart,setCartQty,changeCartQty,clearCart,printCart,printOne,printAvailable,reprintHistory,clearHistory,refreshCameras,startScanner,stopScanner,useScanned,useScannedFromModal,closeScanModal,scanAgain,saveConfig,exportData,importData,clearAll});
+Object.assign(window,{openValidator,go,addProduct,addProductFromPDV,removeProduct,addToCart,setCartQty,changeCartQty,clearCart,printCart,printOne,printAvailable,reprintHistory,clearHistory,refreshCameras,startScanner,stopScanner,useScanned,useScannedFromModal,closeScanModal,scanAgain,saveConfig,saveVoucherModel,exportData,importData,clearAll});
 
 async function boot(){
   initNav();
