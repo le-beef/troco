@@ -42,13 +42,13 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
 .cartTotal{font-size:22px;font-weight:900;margin-top:16px;padding-top:14px;border-top:2px solid var(--line)}
 .productList{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.productItem{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff}.productValue{font-size:20px;font-weight:900}
 .empty{padding:18px;background:#f9fafb;border:1px dashed #d1d5db;border-radius:10px;color:var(--muted);text-align:center}
+.reportMiniGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.reportMiniCard{padding:14px;border:1px solid var(--line);border-radius:12px;background:#fafafa}.reportMiniCard span{display:block;color:var(--muted);font-size:12px}.reportMiniCard strong{display:block;font-size:24px;margin-top:6px}.reportSummary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}.reportSummaryCard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}.reportSummaryCard span{display:block;color:var(--muted);font-size:12px;font-weight:700}.reportSummaryCard strong{display:block;font-size:27px;margin-top:7px}.reportTable td,.reportTable th{white-space:nowrap}.reportTotalRow td{font-weight:900;background:#f9fafb;border-top:2px solid var(--line)}
 .cameraActions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .cameraSelect{margin-top:10px}
 .onlineStatus{padding:8px 10px;border-radius:999px;font-size:11px;font-weight:900;white-space:nowrap}.onlineStatus.ok{background:#dcfce7;color:#166534}.onlineStatus.bad{background:#fee2e2;color:#991b1b}.onlineStatus.neutral{background:#e5e7eb;color:#374151}
 .printSheet{display:none}
 
 /* Validação de QR em destaque */
-.quickValidate{display:none}
 /* A validação é uma página dedicada; nunca fica aberta por padrão. */
 .validatorPanel{display:none}
 .validatorHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
@@ -72,7 +72,6 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
 .scanModalCard.valid .scanIcon{background:#dcfce7;color:#15803d}.scanModalCard.used .scanIcon,.scanModalCard.invalid .scanIcon{background:#fee2e2;color:#b91c1c}.scanModalCard.offline .scanIcon{background:#fef3c7;color:#a16207}
 .scanModalStatus{font-size:26px;font-weight:900;line-height:1.1}.scanModalValue{font-size:36px;font-weight:900;margin:12px 0 8px}.scanModalCode{font-size:13px;color:var(--muted);word-break:break-all}.scanModalInfo{font-size:14px;line-height:1.5;margin-top:10px;color:#374151}.scanModalActions{display:grid;gap:8px;margin-top:18px}.scanModalActions button{min-height:52px;font-size:16px}.scanModalClose{position:absolute;top:10px;right:12px;background:#111827;color:#fff;width:38px;height:38px;padding:0;border-radius:50%;font-size:22px}
 @media(max-width:850px){
- .quickValidate{display:flex;position:fixed;right:14px;bottom:14px;z-index:50;align-items:center;gap:8px;border-radius:999px;padding:13px 17px;background:#111827;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.28);font-size:14px}
  .validatorPanel{margin-top:-2px}
  .validatorCard{padding:14px}
  .validatorTitle{font-size:22px}
@@ -94,12 +93,12 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
 .receiptInfo{font-size:3.2mm;line-height:1.45;text-align:center;margin-top:2mm}.receiptInfo:empty{display:none}.receiptFooter{font-size:2.8mm;margin-top:2mm}
 .receiptCode{font-size:2.7mm;margin-top:1.5mm;letter-spacing:.2mm}
 @media(max-width:850px){
- .side{display:none}.mobileNav{display:flex;gap:6px;overflow:auto;background:#111827;padding:8px;position:sticky;top:0;z-index:5}.mobileNav button{white-space:nowrap;font-size:12px;padding:9px}.main{padding:14px}.grid{grid-template-columns:repeat(2,1fr)}.two,.three{grid-template-columns:1fr}.top{align-items:flex-start}.onlineStatus{font-size:10px;padding:7px 8px}.stat b{font-size:22px}.denoms{grid-template-columns:repeat(2,1fr)}.productList{grid-template-columns:1fr}
+ .side{display:none}.mobileNav{display:flex;gap:6px;overflow:auto;background:#111827;padding:8px;position:sticky;top:0;z-index:5}.mobileNav button{white-space:nowrap;font-size:12px;padding:9px}.main{padding:14px}.grid{grid-template-columns:repeat(2,1fr)}.two,.three{grid-template-columns:1fr}.top{align-items:flex-start}.onlineStatus{font-size:10px;padding:7px 8px}.stat b{font-size:22px}.denoms{grid-template-columns:repeat(2,1fr)}.productList{grid-template-columns:1fr}.reportMiniGrid,.reportSummary{grid-template-columns:1fr}.reportMiniCard strong,.reportSummaryCard strong{font-size:22px}.tablewrap.reportScroll{overflow-x:auto}.reportTable{min-width:760px}
 }
 @media print{
  html,body{background:#fff!important;margin:0!important;padding:0!important}
  body{width:80mm!important}
- .mobileNav,.side,.top,.main>.panel,.quickValidate,.scanModal{display:none!important}
+ .mobileNav,.side,.top,.main>.panel,.scanModal{display:none!important}
  .app,.main{display:block!important;min-height:0!important;width:80mm!important;max-width:none!important;margin:0!important;padding:0!important;background:#fff!important}
  #printArea{display:block!important;width:80mm!important;margin:0!important;padding:0!important}
  #printContent{display:block!important;width:80mm!important;margin:0!important;padding:0!important}
@@ -122,12 +121,23 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
     <div class="grid">
       <div class="card stat"><span class="muted">Vales disponíveis</span><b id="stAvail">0</b></div>
       <div class="card stat"><span class="muted">Vales utilizados</span><b id="stUsed">0</b></div>
-      <div class="card stat"><span class="muted">Valor disponível</span><b id="stValue">R$ 0,00</b></div>
+      <div class="card stat"><span class="muted">Valor não utilizado</span><b id="stValue">R$ 0,00</b></div>
+      <div class="card stat"><span class="muted">Valor utilizado</span><b id="stUsedValue">R$ 0,00</b></div>
+      <div class="card stat"><span class="muted">Valor total gerado</span><b id="stTotalValue">R$ 0,00</b></div>
       <div class="card stat"><span class="muted">Valores cadastrados</span><b id="stProducts">0</b></div>
     </div>
     <div class="card" style="margin-top:16px">
+      <b>Resumo do extrato</b>
+      <div class="reportMiniGrid">
+        <div class="reportMiniCard"><span>Valor utilizado</span><strong id="dashUsedTotal">R$ 0,00</strong></div>
+        <div class="reportMiniCard"><span>Valor não utilizado</span><strong id="dashUnusedTotal">R$ 0,00</strong></div>
+        <div class="reportMiniCard"><span>Valor total gerado</span><strong id="dashGeneratedTotal">R$ 0,00</strong></div>
+      </div>
+      <div class="actions"><button onclick="go('extrato')">VER EXTRATO COMPLETO</button><button onclick="openValidator()" class="secondary">VALIDAR QR AGORA</button></div>
+    </div>
+    <div class="card" style="margin-top:16px">
       <b>Como usar</b>
-      <div class="actions"><button onclick="openValidator()" style="min-width:190px;font-size:16px">VALIDAR QR AGORA</button></div><p class="hint">1. Cadastre os valores de troco. 2. No PDV, clique no valor desejado para montar o carrinho. 3. Ao clicar em “Gerar QR e imprimir”, cada vale recebe um código único e é gravado no Firebase antes da impressão. 4. A logo, tamanho da logo e demais configurações também ficam salvos no Firebase. 5. No caixa/celular, use “Validar QR” para conferir e marcar o vale como utilizado.</p>
+      <p class="hint">1. Cadastre os valores de troco. 2. No PDV, clique no valor desejado para montar o carrinho. 3. Ao clicar em “Gerar QR e imprimir”, cada vale recebe um código único e é gravado no Firebase antes da impressão. 4. A logo, tamanho da logo e demais configurações também ficam salvos no Firebase. 5. No caixa/celular, use “Validar QR” para conferir e marcar o vale como utilizado.</p>
     </div>
   </section>
 
@@ -224,6 +234,29 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
     </div>
   </section>
 
+  <section id="extrato" class="panel">
+    <div class="card">
+      <div class="row" style="justify-content:space-between;align-items:flex-start;gap:12px">
+        <div>
+          <h2 style="margin:0">Extrato de trocos</h2>
+          <div class="hint">Resumo por valor dos trocos gerados, utilizados e ainda não utilizados. Os valores são calculados diretamente dos vales sincronizados no Firebase.</div>
+        </div>
+        <button class="secondary" onclick="renderReport()">Atualizar</button>
+      </div>
+      <div class="reportSummary">
+        <div class="reportSummaryCard"><span>VALOR TOTAL GERADO</span><strong id="reportGenerated">R$ 0,00</strong></div>
+        <div class="reportSummaryCard"><span>VALOR TOTAL UTILIZADO</span><strong id="reportUsed">R$ 0,00</strong></div>
+        <div class="reportSummaryCard"><span>VALOR TOTAL NÃO UTILIZADO</span><strong id="reportUnused">R$ 0,00</strong></div>
+      </div>
+      <div class="tablewrap reportScroll">
+        <table class="reportTable">
+          <thead><tr><th>Troco</th><th>Gerados</th><th>Utilizados</th><th>Não utilizados</th><th>Valor total gerado</th><th>Valor utilizado</th><th>Valor não utilizado</th></tr></thead>
+          <tbody id="reportTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
   <section id="validar" class="panel validatorPanel">
     <div class="card validatorCard">
       <div class="validatorHeader">
@@ -314,7 +347,7 @@ function id(){return 'VT-'+Date.now().toString(36).toUpperCase()+'-'+Math.random
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function openValidator(){go('validar');window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>startScanner(),120)}
 function closeValidatorPage(){stopScanner();go('dashboard')}
-const pages=[['dashboard','🏠 Dashboard'],['pdv','💰 PDV'],['cadastro','🧾 Valores'],['vales','📋 Vales'],['historico','🕘 Histórico'],['validar','📷 Validar QR'],['config','⚙️ Configurações']];
+const pages=[['dashboard','🏠 Dashboard'],['pdv','💰 PDV'],['cadastro','🧾 Valores'],['vales','📋 Vales'],['historico','🕘 Histórico'],['extrato','💵 Extrato'],['validar','📷 Validar QR'],['config','⚙️ Configurações']];
 
 function setOnlineStatus(message,kind='neutral'){
   const el=document.getElementById('onlineStatus');
@@ -427,6 +460,7 @@ function go(p){
   document.querySelectorAll('.nav button,.mobileNav button').forEach(b=>b.classList.toggle('active',b.dataset.page===p));
   if(p==='vales')renderTable();
   if(p==='historico')renderHistory();
+  if(p==='extrato')renderReport();
   if(p==='pdv')renderPDV();
   if(p==='cadastro'){renderProducts();updatePreview()}
   if(p==='validar')refreshCameras();
@@ -438,11 +472,45 @@ function initNav(){
 }
 function renderAll(){
   const avail=state.vouchers.filter(v=>!v.used);
+  const used=state.vouchers.filter(v=>v.used);
+  const unusedValue=avail.reduce((a,v)=>a+Number(v.value||0),0);
+  const usedValue=used.reduce((a,v)=>a+Number(v.value||0),0);
+  const totalValue=unusedValue+usedValue;
   document.getElementById('stAvail').textContent=avail.length;
-  document.getElementById('stUsed').textContent=state.vouchers.filter(v=>v.used).length;
-  document.getElementById('stValue').textContent=money(avail.reduce((a,v)=>a+Number(v.value||0),0));
+  document.getElementById('stUsed').textContent=used.length;
+  document.getElementById('stValue').textContent=money(unusedValue);
+  document.getElementById('stUsedValue').textContent=money(usedValue);
+  document.getElementById('stTotalValue').textContent=money(totalValue);
   document.getElementById('stProducts').textContent=state.products.length;
-  renderTable();renderHistory();renderPDV();renderProducts();updatePreview();
+  const d=document.getElementById('dashUsedTotal');if(d)d.textContent=money(usedValue);
+  const u=document.getElementById('dashUnusedTotal');if(u)u.textContent=money(unusedValue);
+  const t=document.getElementById('dashGeneratedTotal');if(t)t.textContent=money(totalValue);
+  renderTable();renderHistory();renderReport();renderPDV();renderProducts();updatePreview();
+}
+function buildReportRows(){
+  const byValue=new Map();
+  state.vouchers.forEach(v=>{
+    const cents=Math.round(Number(v.value||0)*100);
+    if(!Number.isFinite(cents)||cents<=0)return;
+    if(!byValue.has(cents))byValue.set(cents,{cents,generated:0,used:0,unused:0,generatedCents:0,usedCents:0,unusedCents:0});
+    const row=byValue.get(cents);
+    row.generated++;row.generatedCents+=cents;
+    if(v.used){row.used++;row.usedCents+=cents}else{row.unused++;row.unusedCents+=cents}
+  });
+  return [...byValue.values()].sort((a,b)=>a.cents-b.cents);
+}
+function renderReport(){
+  const rows=buildReportRows();
+  const totalCents=rows.reduce((a,r)=>a+r.generatedCents,0);
+  const usedCents=rows.reduce((a,r)=>a+r.usedCents,0);
+  const unusedCents=rows.reduce((a,r)=>a+r.unusedCents,0);
+  const gen=document.getElementById('reportGenerated');if(gen)gen.textContent=money(totalCents/100);
+  const usd=document.getElementById('reportUsed');if(usd)usd.textContent=money(usedCents/100);
+  const und=document.getElementById('reportUnused');if(und)und.textContent=money(unusedCents/100);
+  const tb=document.getElementById('reportTable');if(!tb)return;
+  if(!rows.length){tb.innerHTML='<tr><td colspan="7"><div class="empty">Ainda não existem vales gerados para mostrar no extrato.</div></td></tr>';return}
+  tb.innerHTML=rows.map(r=>`<tr><td>${money(r.cents/100)}</td><td>${r.generated}</td><td>${r.used}</td><td>${r.unused}</td><td>${money(r.generatedCents/100)}</td><td>${money(r.usedCents/100)}</td><td>${money(r.unusedCents/100)}</td></tr>`).join('');
+  tb.innerHTML+=`<tr class="reportTotalRow"><td>TOTAL</td><td>${rows.reduce((a,r)=>a+r.generated,0)}</td><td>${rows.reduce((a,r)=>a+r.used,0)}</td><td>${rows.reduce((a,r)=>a+r.unused,0)}</td><td>${money(totalCents/100)}</td><td>${money(usedCents/100)}</td><td>${money(unusedCents/100)}</td></tr>`;
 }
 function renderProducts(){
   let el=document.getElementById('productList');if(!el)return;
@@ -843,7 +911,7 @@ function fillConfig(){
 document.getElementById('logoFile').addEventListener('change',readLogo);
 document.getElementById('logoWidth').addEventListener('input',e=>{document.getElementById('logoWidthValue').textContent=e.target.value+' mm';updatePreview()});
 
-Object.assign(window,{openValidator,closeValidatorPage,go,addProduct,addProductFromPDV,removeProduct,addToCart,setCartQty,changeCartQty,clearCart,printCart,printOne,printAvailable,reprintHistory,clearHistory,refreshCameras,startScanner,stopScanner,useScanned,closeScanModal,scanAgain,saveVoucherModel,saveConfig,exportData,importData,clearAll});
+Object.assign(window,{openValidator,closeValidatorPage,go,addProduct,addProductFromPDV,removeProduct,addToCart,setCartQty,changeCartQty,clearCart,printCart,printOne,printAvailable,reprintHistory,clearHistory,renderReport,refreshCameras,startScanner,stopScanner,useScanned,closeScanModal,scanAgain,saveVoucherModel,saveConfig,exportData,importData,clearAll});
 
 async function boot(){
   initNav();
