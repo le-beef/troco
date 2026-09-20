@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Troco QR — PDV</title>
+<title>Troco QR — PDV / Tanca TP-C650 80mm</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <style>
@@ -49,17 +49,20 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
 
 /* Validação de QR em destaque */
 .quickValidate{display:none}
-.validatorPanel{display:none}.validatorPanel.active{display:block}
+.validatorPanel{display:block}
 .validatorHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
 .validatorTitle{font-size:25px;font-weight:900;margin:0}
 .validatorSubtitle{color:var(--muted);font-size:13px;margin-top:4px}
 .validatorCard{max-width:760px;margin:0 auto}
-.validatorScanArea{background:#111827;border-radius:18px;padding:14px;min-height:330px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.validatorScanArea::before{content:"APONTE O QR AQUI";position:absolute;top:14px;left:50%;transform:translateX(-50%);background:#ffffff; color:#111827;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:900;z-index:2;letter-spacing:.3px}
-.validatorScanArea #reader{margin-top:28px;background:#000;border-radius:14px;overflow:hidden;width:100%;max-width:520px;min-height:280px}
-.validatorActions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
-.validatorActions button{min-height:48px}
-.scanHintBig{margin-top:12px;padding:12px;border-radius:12px;background:#f3f4f6;font-weight:700;text-align:center}
+.validatorScanArea{background:#000;border-radius:18px;width:100%;aspect-ratio:4/3;min-height:0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.validatorScanArea::before{content:"APONTE O QR AQUI";position:absolute;top:14px;left:50%;transform:translateX(-50%);background:#fff;color:#111827;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:900;z-index:4;letter-spacing:.3px}
+.validatorScanArea #reader{margin:0;background:#000;border-radius:14px;overflow:hidden;width:100%;height:100%;max-width:none;min-height:0}
+#reader__scan_region,#reader__scan_region video{width:100%!important;height:100%!important}
+#reader video{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important}
+#reader__scan_region{border:0!important}
+#reader__dashboard_section,#reader__dashboard_section_csr{display:none!important}
+.validatorActions{display:flex;justify-content:center;gap:8px;margin-top:12px}
+.validatorActions button{min-height:46px;width:100%}
 .scanModal{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(3px)}
 .scanModal.hidden{display:none!important}
 .scanModalCard{width:min(430px,100%);background:#fff;border-radius:24px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center;animation:scanPop .18s ease-out}
@@ -72,10 +75,10 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
  .validatorPanel{margin-top:-2px}
  .validatorCard{padding:14px}
  .validatorTitle{font-size:22px}
- .validatorScanArea{min-height:390px;padding:10px}
- .validatorScanArea #reader{min-height:350px}
- .validatorActions{grid-template-columns:1fr 1fr}
- .validatorActions button:first-child{grid-column:1/-1}
+ .validatorCard{padding:12px}
+ .validatorScanArea{width:100%;aspect-ratio:3/4;min-height:0;padding:0;border-radius:18px}
+ .validatorActions{margin-top:10px}
+ .validatorTitle{font-size:22px}
  .scanModal{padding:10px}
  .scanModalCard{padding:22px 16px;border-radius:22px}
  .scanModalStatus{font-size:24px}.scanModalValue{font-size:34px}
@@ -98,10 +101,10 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
  .mobileNav,.side,.top,.main>.panel{display:none!important}
  .app,.main{display:block!important;min-height:0!important;width:80mm!important;max-width:none!important;margin:0!important;padding:0!important;background:#fff!important}
  #printArea{display:block!important;width:80mm!important;margin:0!important;padding:0!important}
+ #printContent{display:block!important;width:80mm!important;margin:0!important;padding:0!important}
  .receipt{display:block!important;width:80mm!important;margin:0!important;padding:3mm 3.5mm!important;page-break-after:always!important}
  .receipt:last-child{page-break-after:auto!important}
 }
-.mobileNav{display:none}
 </style>
 </head>
 <body>
@@ -184,7 +187,7 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
         <label>Informação personalizada — linha 4</label><input id="line4" maxlength="80">
         <div class="hint">Esses textos ficam guardados no vale no momento da impressão. Não há QR Code no cadastro do valor.</div>
         <div class="actions"><button onclick="saveVoucherModel()">💾 SALVAR MODELO DO VALE NO FIREBASE</button></div>
-        <div class="hint" id="modelSaveStatus" style="margin-top:8px"></div>
+        <div id="modelSaveStatus" class="hint" style="margin-top:8px"></div>
         <div class="card" style="margin-top:16px;background:#fafafa">
           <h3 style="margin-top:0">Prévia</h3>
           <div id="previewBox" class="receipt" style="border:1px dashed #bbb;width:80mm;max-width:100%;margin:auto"></div>
@@ -225,22 +228,17 @@ input[type=file]{padding:8px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin
       <div class="validatorHeader">
         <div>
           <div class="validatorTitle">📷 Validar Troco</div>
-          <div class="validatorSubtitle">Aponte a câmera para o QR Code. O resultado aparece grande na tela e toca um sinal sonoro.</div>
+          <div id="cameraStatus" class="validatorSubtitle">Abrindo câmera traseira...</div>
         </div>
-        <span class="onlineStatus ok">CAIXA</span>
+        <button class="secondary small" onclick="closeValidatorPage()">FECHAR</button>
       </div>
       <div class="validatorScanArea">
-        <select id="cameraSelect" class="cameraSelect hidden"></select>
         <div id="reader"></div>
       </div>
       <div class="validatorActions">
-        <button onclick="startScanner()">📷 ABRIR CÂMERA</button>
-        <button class="secondary" onclick="stopScanner()">PARAR</button>
-        <button class="secondary" onclick="refreshCameras()">🔄 TROCAR CÂMERA</button>
+        <button id="retryCameraBtn" class="hidden" onclick="startScanner()">📷 ABRIR CÂMERA</button>
       </div>
-      <div class="scanHintBig">✅ Vale válido: aparece <b>VALE VÁLIDO</b> e você pode <b>INUTILIZAR VALE</b>. <br>⛔ Vale já usado: aparece <b>VALE JÁ UTILIZADO</b> e o horário.</div>
-      <div id="cameraStatus" class="hint" style="margin-top:10px;text-align:center"></div>
-      <div id="scanResult" class="result hidden">Nenhum QR Code lido.</div>
+      <div id="scanResult" class="result hidden"></div>
     </div>
   </section>
 
@@ -299,7 +297,7 @@ let state = {
   products: DEFAULT_PRODUCTS.slice(),
   vouchers: [],
   history: [],
-  config: {shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:''}
+  config: {shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:'',logoWidth:30,line1:'',line2:'',line3:'',line4:''}
 };
 let cart={};
 let scanner=null;
@@ -314,7 +312,8 @@ let previousRemoteEmpty=true;
 function money(v){return (Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
 function id(){return 'VT-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,9).toUpperCase()}
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function openValidator(){go('validar');window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>startScanner(),350)}
+function openValidator(){go('validar');window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>startScanner(),120)}
+function closeValidatorPage(){stopScanner();go('dashboard')}
 const pages=[['dashboard','🏠 Dashboard'],['pdv','💰 PDV'],['cadastro','🧾 Valores'],['vales','📋 Vales'],['historico','🕘 Histórico'],['validar','📷 Validar QR'],['config','⚙️ Configurações']];
 
 function setOnlineStatus(message,kind='neutral'){
@@ -372,7 +371,7 @@ async function loadRemoteState(){
   const snap=await get(rootRef);
   const data=snap.val();
   if(!data){
-    state={products:DEFAULT_PRODUCTS.slice(),vouchers:[],history:[],config:{shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:'',logoWidth:30,line1:'',line2:'',line3:'',line4:''}};
+    state={products:DEFAULT_PRODUCTS.slice(),vouchers:[],history:[],config:{shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:'',logoWidth:30}};
     previousRemoteEmpty=true;
     const local=getLocalState();
     if(local && hasLocalData()){
@@ -489,7 +488,7 @@ function renderCart(){
   document.getElementById('cartTotal').textContent=money(total);
   el.innerHTML=items.length?items.map(x=>`<div class="cartRow"><div class="cartInfo"><div class="cartValue">${money(x.value)}</div><div class="cartQty">${money(x.value)} cada</div></div><div class="cartControls"><button class="qtyBtn" onclick="changeCartQty(${x.value},-1)">−</button><span class="qtyNum">${x.qty}</span><button class="qtyBtn" onclick="changeCartQty(${x.value},1)">+</button><button class="qtyBtn secondary" onclick="setCartQty(${x.value},0)">×</button></div></div>`).join(''):'<div class="empty">Nenhum vale no carrinho.</div>';
 }
-function currentLines(){return ['line1','line2','line3','line4'].map(id=>document.getElementById(id)?.value||'').filter(Boolean)}
+function currentLines(){return ['line1','line2','line3','line4'].map((id,i)=>document.getElementById(id)?.value||state.config['line'+(i+1)]||'').filter(Boolean)}
 function currentLogo(){return logoData||state.config.logo||''}
 function currentLogoWidth(){
   const raw=Number(document.getElementById('logoWidth')?.value);
@@ -519,15 +518,30 @@ function buildPrintReceipt(v){
   let canvas=q.querySelector('canvas');if(canvas)q.innerHTML=`<img src="${canvas.toDataURL('image/png')}" alt="QR Code">`;
   return receipt.outerHTML;
 }
-function openPrintWindow(vouchers){
-  if(!vouchers.length)return alert('Nenhum vale para imprimir.');
-  let w=window.open('', '_blank', 'width=420,height=700');
-  if(!w)return alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este site e tente novamente.');
-  let receipts=vouchers.map(buildPrintReceipt).join('');
-  w.document.open();
-  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Impressão - Troco QR</title><style>@page{size:80mm auto;margin:0}html,body{margin:0;padding:0;background:#fff;color:#000;width:80mm}body{font-family:Arial,Helvetica,sans-serif}.receipt{width:80mm;margin:0;padding:3mm 3.5mm;font-family:Arial,Helvetica,sans-serif;color:#000;text-align:center;page-break-after:always;box-sizing:border-box}.receipt:last-child{page-break-after:auto}.receipt .logo{max-width:80mm;max-height:30mm;width:auto;height:auto;object-fit:contain;margin:0 auto 2mm}.receipt .sep{border-top:1px solid #000;margin:2mm 0}.receiptMain{display:flex;align-items:center;justify-content:space-between;gap:3mm;text-align:left}.receiptText{flex:1}.receiptText .title{font-size:8mm;font-weight:900;line-height:1}.receiptText .value{font-size:9mm;font-weight:900;margin-top:2mm}.receiptQr{width:30mm;height:30mm;display:flex;align-items:center;justify-content:center}.receiptQr img{width:30mm!important;height:30mm!important;display:block}.receiptInfo{font-size:3.2mm;line-height:1.45;text-align:center;margin-top:2mm}.receiptFooter{font-size:2.8mm;margin-top:2mm}.receiptCode{font-size:2.7mm;margin-top:1.5mm;letter-spacing:.2mm}@media print{html,body{width:80mm!important;margin:0!important;padding:0!important}.receipt{width:80mm!important;margin:0!important}}</style></head><body>${receipts}<script>window.addEventListener('load',function(){setTimeout(function(){window.focus();window.print()},300)});window.addEventListener('afterprint',function(){setTimeout(function(){window.close()},200)});<\\/script></body></html>`);
-  w.document.close();
+function preparePrint(vouchers){
+  const pc=document.getElementById('printContent');
+  pc.innerHTML='';
+  vouchers.forEach(v=>{
+    const temp=document.createElement('div');
+    temp.innerHTML=voucherHTML(v);
+    const receipt=temp.firstElementChild;
+    const q=receipt.querySelector('.receiptQr');
+    new QRCode(q,{text:JSON.stringify({app:'trocoQR',code:v.code,value:v.value}),width:220,height:220,correctLevel:QRCode.CorrectLevel.M});
+    const canvas=q.querySelector('canvas');
+    if(canvas)q.innerHTML=`<img src="${canvas.toDataURL('image/png')}" alt="QR Code">`;
+    pc.appendChild(receipt);
+  });
 }
+function printVouchers(vouchers){
+  if(!vouchers.length)return alert('Nenhum vale para imprimir.');
+  preparePrint(vouchers);
+  document.body.classList.add('printing');
+  requestAnimationFrame(()=>setTimeout(()=>window.print(),120));
+}
+window.addEventListener('afterprint',()=>{
+  document.body.classList.remove('printing');
+  const pc=document.getElementById('printContent');if(pc)pc.innerHTML='';
+});
 async function printCart(){
   if(!firebaseConnected)return alert('Sem conexão com o Firebase. Aguarde ficar ONLINE antes de gerar os vales.');
   let items=cartItems();if(!items.length)return alert('Adicione pelo menos um vale ao carrinho.');
@@ -539,7 +553,7 @@ async function printCart(){
   try{
     await update(rootRef,updates);
     cart={};renderCart();
-    openPrintWindow(created);
+    printVouchers(created);
   }catch(e){alert('Erro ao gravar no Firebase. Os QR Codes não foram gerados para impressão.\n\n'+(e?.message||e))}
 }
 function buildReceipt(v){
@@ -560,14 +574,14 @@ function renderHistory(){
   if(!hs.length){tb.innerHTML='<tr><td colspan="5"><div class="empty">Nenhuma geração registrada ainda. Use o PDV e clique em “Gerar QR e imprimir”.</div></td></tr>';return}
   hs.forEach(h=>{let summary=(h.items||[]).map(x=>`${x.qty}× ${money(x.value)}`).join(' + ');let tr=document.createElement('tr');tr.innerHTML=`<td>${new Date(h.created).toLocaleString('pt-BR')}</td><td>${h.quantity||0}</td><td>${escapeHtml(summary)}</td><td>${money(h.total)}</td><td><button class="small" onclick="reprintHistory('${escapeHtml(h.id)}')">Reimprimir</button></td>`;tb.appendChild(tr)})
 }
-function reprintHistory(id){let h=state.history.find(x=>x.id===id);if(!h)return;let vs=(h.voucherCodes||[]).map(code=>state.vouchers.find(v=>v.code===code)).filter(Boolean);if(!vs.length)return alert('Os vales deste lote não foram encontrados.');openPrintWindow(vs)}
+function reprintHistory(id){let h=state.history.find(x=>x.id===id);if(!h)return;let vs=(h.voucherCodes||[]).map(code=>state.vouchers.find(v=>v.code===code)).filter(Boolean);if(!vs.length)return alert('Os vales deste lote não foram encontrados.');printVouchers(vs)}
 async function clearHistory(){
   if(!state.history.length)return;if(!confirm('Apagar somente o histórico de gerações? Os vales continuarão cadastrados.'))return;
   if(!firebaseConnected)return alert('Sem conexão com o Firebase.');
   try{await remove(ref(db,'trocoQR/history'))}catch(e){alert('Não foi possível limpar o histórico: '+(e?.message||e))}
 }
-function printOne(code){let v=state.vouchers.find(x=>x.code===code);if(!v)return;openPrintWindow([v])}
-function printAvailable(){let vs=state.vouchers.filter(v=>!v.used);if(!vs.length)return alert('Não há vales disponíveis.');openPrintWindow(vs)}
+function printOne(code){let v=state.vouchers.find(x=>x.code===code);if(!v)return;printVouchers([v])}
+function printAvailable(){let vs=state.vouchers.filter(v=>!v.used);if(!vs.length)return alert('Não há vales disponíveis.');printVouchers(vs)}
 
 let audioCtx=null;
 function initScanAudio(){
@@ -645,30 +659,52 @@ async function useScannedFromModal(code){
   }
 }
 async function refreshCameras(){
-  let status=document.getElementById('cameraStatus'),select=document.getElementById('cameraSelect');if(!status||!select)return;
-  if(!window.isSecureContext){status.innerHTML='<div class="alert badbg">Este site não está em um contexto seguro. No GitHub Pages, use o endereço <b>https://</b>.</div>';select.classList.add('hidden');return}
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){status.innerHTML='<div class="alert badbg">Este navegador não disponibilizou acesso à câmera.</div>';return}
-  try{
-    let stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}});stream.getTracks().forEach(t=>t.stop());
-    let cameras=await Html5Qrcode.getCameras();select.innerHTML='';cameras.forEach((cam,i)=>{let o=document.createElement('option');o.value=cam.id;o.textContent=cam.label||('Câmera '+(i+1));select.appendChild(o)});
-    if(cameras.length>1)select.classList.remove('hidden');else select.classList.add('hidden');
-    status.textContent=cameras.length?'Câmera pronta. Toque em “Abrir câmera”.':'';
-  }catch(e){select.classList.add('hidden');status.innerHTML='<div class="alert warnbg">Permita a câmera no navegador e toque em “Atualizar câmeras”.</div>'}
+  startScanner();
 }
 async function startScanner(){
-  let status=document.getElementById('cameraStatus');if(scanner)return;
+  const status=document.getElementById('cameraStatus');
+  const retry=document.getElementById('retryCameraBtn');
+  if(scanner)return;
   initScanAudio();
   closeScanModal();
-  if(!window.isSecureContext)return status.innerHTML='<div class="alert badbg">Abra o site pelo <b>HTTPS</b> do GitHub Pages para usar a câmera.</div>';
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return status.innerHTML='<div class="alert badbg">Seu navegador não oferece acesso à câmera.</div>';
+  if(retry)retry.classList.add('hidden');
+  if(!window.isSecureContext){
+    status.innerHTML='<span style="color:#b91c1c;font-weight:800">Abra o site pelo HTTPS do GitHub Pages para usar a câmera.</span>';
+    if(retry)retry.classList.remove('hidden');
+    return;
+  }
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    status.innerHTML='<span style="color:#b91c1c;font-weight:800">Seu navegador não oferece acesso à câmera.</span>';
+    if(retry)retry.classList.remove('hidden');
+    return;
+  }
   try{
-    let cameras=await Html5Qrcode.getCameras();if(!cameras.length)throw new Error('Nenhuma câmera encontrada.');
-    let select=document.getElementById('cameraSelect');let cameraId=select.value||cameras.find(c=>/back|rear|trás|environment/i.test(c.label))?.id||cameras[0].id;
-    scanner=new Html5Qrcode('reader');await scanner.start(cameraId,{fps:12,qrbox:(vw,vh)=>{let s=Math.min(vw,vh,280);return {width:s,height:s}}},txt=>handleScan(txt),()=>{});
-    status.textContent='Câmera aberta. Aponte para o QR Code.';
-  }catch(e){scanner=null;status.innerHTML='<div class="alert badbg"><b>Não foi possível abrir a câmera.</b><br>'+escapeHtml(e?.message||'Verifique a permissão da câmera e o HTTPS.')+'</div>'}
+    scanner=new Html5Qrcode('reader');
+    const config={fps:12,qrbox:(vw,vh)=>{const s=Math.floor(Math.min(vw,vh)*0.78);return {width:s,height:s}}};
+    try{
+      await scanner.start({facingMode:'environment'},config,txt=>handleScan(txt),()=>{});
+    }catch(firstError){
+      const cameras=await Html5Qrcode.getCameras();
+      const rear=cameras.find(c=>/back|rear|trás|environment/i.test(c.label))||cameras[cameras.length-1];
+      if(!rear)throw firstError;
+      await scanner.stop().catch(()=>{});
+      scanner.clear();
+      scanner=new Html5Qrcode('reader');
+      await scanner.start(rear.id,config,txt=>handleScan(txt),()=>{});
+    }
+    status.textContent='Aponte para o QR Code';
+  }catch(e){
+    try{scanner?.clear()}catch(_e){}
+    scanner=null;
+    status.innerHTML='<span style="color:#b91c1c;font-weight:800">Não foi possível abrir a câmera. Permita a câmera e tente novamente.</span>';
+    if(retry)retry.classList.remove('hidden');
+  }
 }
-async function stopScanner(){if(!scanner)return;try{await scanner.stop();scanner.clear()}catch(e){}scanner=null;document.getElementById('cameraStatus').textContent='Câmera parada.'}
+async function stopScanner(){
+  if(!scanner)return;
+  try{await scanner.stop();scanner.clear()}catch(e){}
+  scanner=null;
+}
 async function handleScan(txt){
   if(!txt||txt===lastScanCode)return;
   lastScanCode=txt;
@@ -724,9 +760,31 @@ async function useScanned(code){
   }catch(e){showValidationModal('offline',null,'Não foi possível validar o vale no Firebase.<br>'+escapeHtml(e?.message||e))}
 }
 function readLogo(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{logoData=r.result;document.getElementById('logoPreview').src=logoData;document.getElementById('logoPreview').style.display='block';updatePreview()};r.readAsDataURL(f)}
+async function saveVoucherModel(){
+  const status=document.getElementById('modelSaveStatus');
+  if(!firebaseConnected){if(status)status.textContent='Sem conexão com o Firebase.';return alert('Sem conexão com o Firebase.')}
+  const cfg={
+    ...state.config,
+    logo:logoData||state.config.logo||'',
+    logoWidth:currentLogoWidth(),
+    line1:document.getElementById('line1')?.value||'',
+    line2:document.getElementById('line2')?.value||'',
+    line3:document.getElementById('line3')?.value||'',
+    line4:document.getElementById('line4')?.value||''
+  };
+  try{
+    await set(ref(db,'trocoQR/config'),cfg);
+    state.config=cfg;
+    logoData=cfg.logo||'';
+    if(status)status.textContent='Modelo salvo no Firebase com sucesso. Logo, tamanho e textos sincronizados.';
+  }catch(e){
+    if(status)status.textContent='Erro ao salvar no Firebase.';
+    alert('Não foi possível salvar o modelo: '+(e?.message||e));
+  }
+}
 async function saveConfig(){
   if(!firebaseConnected)return alert('Sem conexão com o Firebase.');
-  const cfg={shopName:document.getElementById('shopName').value,footerText:document.getElementById('footerText').value,logo:logoData||state.config.logo||'',logoWidth:currentLogoWidth(),line1:document.getElementById('line1')?.value||'',line2:document.getElementById('line2')?.value||'',line3:document.getElementById('line3')?.value||'',line4:document.getElementById('line4')?.value||''};
+  const cfg={...state.config,shopName:document.getElementById('shopName').value,footerText:document.getElementById('footerText').value,logo:logoData||state.config.logo||'',logoWidth:currentLogoWidth(),line1:document.getElementById('line1')?.value||state.config.line1||'',line2:document.getElementById('line2')?.value||state.config.line2||'',line3:document.getElementById('line3')?.value||state.config.line3||'',line4:document.getElementById('line4')?.value||state.config.line4||''};
   try{await set(ref(db,'trocoQR/config'),cfg);state.config=cfg;alert('Configurações salvas online.')}
   catch(e){alert('Não foi possível salvar: '+(e?.message||e))}
 }
@@ -747,29 +805,10 @@ async function clearAll(){
   try{await set(rootRef,{products:DEFAULT_PRODUCTS.slice(),config:{shopName:'Seu Bar',footerText:'Obrigado pela preferência!',logo:'',logoWidth:30,line1:'',line2:'',line3:'',line4:''}});cart={};alert('Banco online limpo.');}
   catch(e){alert('Não foi possível apagar: '+(e?.message||e))}
 }
-async function saveVoucherModel(){
-  if(!firebaseConnected)return alert('Sem conexão com o Firebase. Aguarde o status ONLINE antes de salvar.');
-  const btns=[...document.querySelectorAll('#cadastro button')];
-  btns.forEach(b=>{if((b.textContent||'').includes('SALVAR MODELO'))b.disabled=true});
-  const status=document.getElementById('modelSaveStatus');
-  const cfg={...state.config,shopName:document.getElementById('shopName')?.value||state.config.shopName||'Seu Bar',footerText:document.getElementById('footerText')?.value||state.config.footerText||'Obrigado pela preferência!',logo:logoData||state.config.logo||'',logoWidth:currentLogoWidth(),line1:document.getElementById('line1')?.value||'',line2:document.getElementById('line2')?.value||'',line3:document.getElementById('line3')?.value||'',line4:document.getElementById('line4')?.value||''};
-  try{
-    await set(ref(db,'trocoQR/config'),cfg);
-    state.config=cfg;
-    logoData=cfg.logo||'';
-    if(status){status.textContent='✅ Modelo salvo no Firebase com sucesso.';status.style.color='#15803d';}
-    fillConfig();
-    updatePreview();
-  }catch(e){
-    if(status){status.textContent='❌ Não foi possível salvar no Firebase: '+(e?.message||e);status.style.color='#b91c1c';}
-    else alert('Não foi possível salvar o modelo: '+(e?.message||e));
-  }finally{btns.forEach(b=>b.disabled=false)}
-}
 function fillConfig(){
   const shop=document.getElementById('shopName'),footer=document.getElementById('footerText');
   if(shop)shop.value=state.config.shopName||'';if(footer)footer.value=state.config.footerText||'';
-  const l1=document.getElementById('line1'),l2=document.getElementById('line2'),l3=document.getElementById('line3'),l4=document.getElementById('line4');
-  if(l1)l1.value=state.config.line1||'';if(l2)l2.value=state.config.line2||'';if(l3)l3.value=state.config.line3||'';if(l4)l4.value=state.config.line4||'';
+  ['line1','line2','line3','line4'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=state.config[id]||''});
   const preview=document.getElementById('logoPreview');if(preview&&logoData){preview.src=logoData;preview.style.display='block'}
   const slider=document.getElementById('logoWidth'),valueEl=document.getElementById('logoWidthValue');
   const w=Math.max(0,Math.min(80,Number(state.config.logoWidth??30)||0));
@@ -781,7 +820,7 @@ function fillConfig(){
 document.getElementById('logoFile').addEventListener('change',readLogo);
 document.getElementById('logoWidth').addEventListener('input',e=>{document.getElementById('logoWidthValue').textContent=e.target.value+' mm';updatePreview()});
 
-Object.assign(window,{openValidator,go,addProduct,addProductFromPDV,removeProduct,addToCart,setCartQty,changeCartQty,clearCart,printCart,printOne,printAvailable,reprintHistory,clearHistory,refreshCameras,startScanner,stopScanner,useScanned,useScannedFromModal,closeScanModal,scanAgain,saveConfig,saveVoucherModel,exportData,importData,clearAll});
+Object.assign(window,{openValidator,closeValidatorPage,go,addProduct,addProductFromPDV,removeProduct,addToCart,setCartQty,changeCartQty,clearCart,printCart,printOne,printAvailable,reprintHistory,clearHistory,refreshCameras,startScanner,stopScanner,useScanned,useScannedFromModal,closeScanModal,scanAgain,saveVoucherModel,saveConfig,exportData,importData,clearAll});
 
 async function boot(){
   initNav();
